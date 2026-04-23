@@ -1,5 +1,10 @@
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+
 plugins {
-    java
+    id("java")
+    id("com.github.ben-manes.versions") version "0.53.0"
+    id("checkstyle")
+    id("org.sonarqube") version "7.2.3.7755"
 }
 
 group = "hexlet.code"
@@ -26,4 +31,29 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
     systemProperty("APP_BASE_URL", System.getenv("APP_BASE_URL") ?: "http://localhost:5173")
+}
+
+tasks.withType<DependencyUpdatesTask> {
+    fun isNonStable(version: String): Boolean {
+        val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
+        val regex = "^[0-9,.v-]+(-r)?$".toRegex()
+        val isStable = stableKeyword || regex.matches(version)
+        return isStable.not()
+    }
+
+    rejectVersionIf {
+        isNonStable(candidate.version) && !isNonStable(currentVersion)
+    }
+}
+
+checkstyle {
+    toolVersion = "13.4.0"
+    configFile = rootProject.file("config/checkstyle/checkstyle.xml")
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "astafeev-es_qa-auto-engineer-java-project-78")
+        property("sonar.organization", "astafeev-es")
+    }
 }
