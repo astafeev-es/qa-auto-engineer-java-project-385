@@ -34,11 +34,39 @@ public class UserTest extends BaseTest {
     }
 
     @Test
+    public void testUserListDisplay() {
+        String email = "list" + RandomStringUtils.secure().nextAlphanumeric(4, 8) + "@test.com";
+        usersPage.create(email, "List", "User");
+
+        assertTrue(usersPage.isColumnVisible("Email"));
+        assertTrue(usersPage.isColumnVisible("First name"));
+        assertTrue(usersPage.isColumnVisible("Last name"));
+
+        assertEquals(email, usersPage.getCellValue(email, "Email"));
+        assertEquals("List", usersPage.getCellValue(email, "First name"));
+        assertEquals("User", usersPage.getCellValue(email, "Last name"));
+    }
+
+    @Test
     public void testUserEditing() {
         String email = "edit" + RandomStringUtils.secure().nextAlphanumeric(4, 8) + "@test.com";
         usersPage.create(email, "Before", "Edit");
+
+        usersPage.openUserSettings(email);
+        assertEquals(email, usersPage.getFieldValue("email"));
+        assertEquals("Before", usersPage.getFieldValue("firstName"));
+        assertEquals("Edit", usersPage.getFieldValue("lastName"));
+
         usersPage.edit(email, "AfterEdit");
-        assertTrue(usersPage.isUserPresent("AfterEdit"));
+        assertEquals("AfterEdit", usersPage.getCellValue(email, "First name"));
+    }
+
+    @Test
+    public void testEmailValidation() {
+        usersPage.openCreatePage();
+        usersPage.fillForm("invalid-email", "Test", "User");
+        usersPage.submit();
+        assertEquals("Incorrect email format", usersPage.getErrorMessage());
     }
 
     @Test

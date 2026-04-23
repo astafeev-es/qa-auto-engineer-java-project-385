@@ -1,67 +1,65 @@
 package hexlet.code.pages;
 
-import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class UsersPage extends BasePage {
-
-    @FindBy(xpath = "//a[contains(., 'Create')]")
-    private WebElement createButton;
-
-    @FindBy(xpath = "//table/tbody/tr")
-    private List<WebElement> users;
-
-    @FindBy(name = "email")
-    private WebElement emailField;
-
-    @FindBy(name = "firstName")
-    private WebElement firstNameField;
-
-    @FindBy(name = "lastName")
-    private WebElement lastNameField;
-
-    @FindBy(xpath = "//button[@type='submit']")
-    private WebElement submitButton;
-
-    @FindBy(xpath = "//button[@aria-label='Delete']")
-    private WebElement deleteButton;
-
-    @FindBy(xpath = "//input[@aria-label='Select all']")
-    private WebElement selectAllCheckbox;
 
     public UsersPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
     }
 
     public void create(String email, String firstName, String lastName) {
-        wait.until(ExpectedConditions.visibilityOf(createButton)).click();
-        wait.until(ExpectedConditions.visibilityOf(emailField)).sendKeys(email);
-        firstNameField.sendKeys(firstName);
-        lastNameField.sendKeys(lastName);
-        wait.until(ExpectedConditions.elementToBeClickable(submitButton)).click();
+        openCreatePage();
+        fillForm(email, firstName, lastName);
+        submit();
         openUsersPage();
+    }
+
+    public void fillForm(String email, String firstName, String lastName) {
+        WebElement emailField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("email")));
+        emailField.clear();
+        emailField.sendKeys(email);
+        driver.findElement(By.name("firstName")).clear();
+        driver.findElement(By.name("firstName")).sendKeys(firstName);
+        driver.findElement(By.name("lastName")).clear();
+        driver.findElement(By.name("lastName")).sendKeys(lastName);
+    }
+
+    public UsersPage openCreatePage() {
+        openUsersPage();
+        wait.until(ExpectedConditions.visibilityOf(createButton)).click();
+        return this;
+    }
+
+    public String getErrorMessage() {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(
+            By.className("MuiFormHelperText-root"))).getText();
     }
 
     public UsersPage openUserSettings(String email) {
         openUsersPage();
-        WebElement userToEdit = wait.until(ExpectedConditions.elementToBeClickable(
-            By.xpath(String.format("//tr[td[contains(., '%s')]]", email))));
-        wait.until(ExpectedConditions.elementToBeClickable(userToEdit)).click();
+        String rowXpath = "//tr[td[contains(., '%s')]]".formatted(email);
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath))).click();
         return this;
     }
 
     public UsersPage edit(String email, String newFirstName) {
         openUserSettings(email);
 
-        wait.until(ExpectedConditions.visibilityOf(firstNameField));
-        firstNameField.clear();
-        firstNameField.sendKeys(newFirstName);
-        wait.until(ExpectedConditions.elementToBeClickable(submitButton)).click();
+        WebElement field = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("firstName")));
+        field.clear();
+        field.sendKeys(newFirstName);
+
+        WebElement last = driver.findElement(By.name("lastName"));
+        String oldLast = last.getAttribute("value");
+        last.clear();
+        last.sendKeys(oldLast + "Updated");
+
+        submit();
         openUsersPage();
         return this;
     }
@@ -70,18 +68,17 @@ public class UsersPage extends BasePage {
         openUsersPage();
         String rowXpath = "//tr[td[contains(., '%s')]]".formatted(email);
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(rowXpath)));
-        // Кликаем по родителю, так как input может быть скрыт или перекрыт MUI
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath + "//input[@type='checkbox']/.."))).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath + "//input[@type='checkbox']/..")))
+            .click();
 
         wait.until(ExpectedConditions.elementToBeClickable(deleteButton)).click();
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//table/tbody/tr[td[contains(., '%s')]]"
-            .formatted(email))));
+        String cellXpath = "//table/tbody/tr/td[contains(., '%s')]".formatted(email);
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(cellXpath)));
         return this;
     }
 
     public boolean isUserPresent(String text) {
         try {
-            // Убедимся, что мы на странице списка
             return driver.findElements(By.xpath("//td[contains(., '" + text + "')]")).size() > 0;
         } catch (Exception e) {
             return false;

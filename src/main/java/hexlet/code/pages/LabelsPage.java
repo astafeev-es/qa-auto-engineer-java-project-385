@@ -1,11 +1,71 @@
 package hexlet.code.pages;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class LabelsPage extends BasePage {
 
     public LabelsPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
+    }
+
+    public void create(String name) {
+        openCreatePage();
+        fillForm(name);
+        submit();
+        openLabelsPage();
+    }
+
+    public void fillForm(String name) {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("name"))).clear();
+        driver.findElement(By.name("name")).sendKeys(name);
+    }
+
+    public LabelsPage openCreatePage() {
+        openLabelsPage();
+        wait.until(ExpectedConditions.visibilityOf(createButton)).click();
+        return this;
+    }
+
+    public LabelsPage openLabelSettings(String name) {
+        openLabelsPage();
+        String rowXpath = "//tr[td[contains(., '%s')]]".formatted(name);
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath))).click();
+        return this;
+    }
+
+    public LabelsPage edit(String name, String newName) {
+        openLabelSettings(name);
+        WebElement field = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("name")));
+        field.clear();
+        field.sendKeys(newName);
+
+        submit();
+        openLabelsPage();
+        return this;
+    }
+
+    public LabelsPage deleteLabel(String name) {
+        openLabelsPage();
+        String rowXpath = "//tr[td[contains(., '%s')]]".formatted(name);
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(rowXpath)));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath + "//input[@type='checkbox']/..")))
+            .click();
+
+        wait.until(ExpectedConditions.elementToBeClickable(deleteButton)).click();
+        String cellXpath = "//table/tbody/tr/td[contains(., '%s')]".formatted(name);
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(cellXpath)));
+        return this;
+    }
+
+    public boolean isLabelPresent(String text) {
+        try {
+            return driver.findElements(By.xpath("//td[contains(., '" + text + "')]")).size() > 0;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

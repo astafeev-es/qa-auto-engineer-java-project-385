@@ -1,5 +1,7 @@
 package hexlet.code.pages;
 
+import java.util.List;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -26,10 +28,56 @@ public abstract class BasePage {
     @FindBy(xpath = "//a[contains(text(), 'Task statuses')]")
     protected WebElement taskStatusesMenuItem;
 
+    @FindBy(xpath = "//button[@type='submit']")
+    protected WebElement submitButton;
+
+    @FindBy(xpath = "//a[contains(., 'Create')]")
+    protected WebElement createButton;
+
+    @FindBy(xpath = "//button[@aria-label='Delete']")
+    protected WebElement deleteButton;
+
     public BasePage(WebDriver driver, WebDriverWait wait) {
         this.driver = driver;
         this.wait = wait;
         PageFactory.initElements(driver, this);
+    }
+
+    public void submit() {
+        wait.until(ExpectedConditions.elementToBeClickable(submitButton)).click();
+    }
+
+    public String getFieldValue(String fieldName) {
+        By locator = By.name(fieldName);
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(locator)).getAttribute("value");
+    }
+
+    public boolean isColumnVisible(String columnName) {
+        return driver.findElements(By.xpath("//th[contains(., '" + columnName + "')]")).size() > 0;
+    }
+
+    public String getCellValue(String rowSearchText, String columnName) {
+        List<WebElement> headers = driver.findElements(By.xpath("//th"));
+        int index = -1;
+        for (int i = 0; i < headers.size(); i++) {
+            if (headers.get(i).getText().contains(columnName)) {
+                index = i + 1;
+                break;
+            }
+        }
+        if (index == -1) {
+            return null;
+        }
+        String cellXpath = "//tr[td[contains(., '%s')]]/td[%d]".formatted(rowSearchText, index);
+        return wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(cellXpath))).getText();
+    }
+
+    public void selectFromCombobox(String label, String value) {
+        String comboXp = "//div[label[contains(., '%s')]]//div[@role='combobox']".formatted(label);
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(comboXp))).click();
+
+        String optXp = "//li[@role='option' and contains(., '%s')]".formatted(value);
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(optXp))).click();
     }
 
     public DashboardPage openDashboardPage() {
