@@ -28,7 +28,7 @@ public class UsersPage extends BasePage {
     @FindBy(xpath = "//button[@type='submit']")
     private WebElement submitButton;
 
-    @FindBy(xpath = "//button[contains(., 'Delete')]")
+    @FindBy(xpath = "//button[@aria-label='Delete']")
     private WebElement deleteButton;
 
     @FindBy(xpath = "//input[@aria-label='Select all']")
@@ -44,10 +44,11 @@ public class UsersPage extends BasePage {
         firstNameField.sendKeys(firstName);
         lastNameField.sendKeys(lastName);
         wait.until(ExpectedConditions.elementToBeClickable(submitButton)).click();
-        wait.until(ExpectedConditions.urlContains("/users"));
+        openUsersPage();
     }
 
     public UsersPage openUserSettings(String email) {
+        openUsersPage();
         WebElement userToEdit = wait.until(ExpectedConditions.elementToBeClickable(
             By.xpath(String.format("//tr[td[contains(., '%s')]]", email))));
         wait.until(ExpectedConditions.elementToBeClickable(userToEdit)).click();
@@ -60,40 +61,46 @@ public class UsersPage extends BasePage {
         wait.until(ExpectedConditions.visibilityOf(firstNameField));
         firstNameField.clear();
         firstNameField.sendKeys(newFirstName);
-        wait.until(ExpectedConditions.elementToBeClickable(submitButton));
-        wait.until(ExpectedConditions.urlContains("/users"));
+        wait.until(ExpectedConditions.elementToBeClickable(submitButton)).click();
+        openUsersPage();
         return this;
     }
 
     public UsersPage deleteUser(String email) {
-        WebElement row = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//tr[td[contains(., '%s')]]".formatted(email))));
-        WebElement checkbox = row.findElement(By.xpath(".//input[@type='checkbox']"));
-        wait.until(ExpectedConditions.elementToBeClickable(checkbox)).click();
-        
+        openUsersPage();
+        String rowXpath = "//tr[td[contains(., '%s')]]".formatted(email);
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(rowXpath)));
+        // Кликаем по родителю, так как input может быть скрыт или перекрыт MUI
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath + "//input[@type='checkbox']/.."))).click();
+
         wait.until(ExpectedConditions.elementToBeClickable(deleteButton)).click();
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//td[contains(., '%s')]".formatted(email))));
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//table/tbody/tr[td[contains(., '%s')]]"
+            .formatted(email))));
         return this;
     }
 
     public boolean isUserPresent(String text) {
         try {
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//td[contains(., '" + text + "')]")));
-            return true;
+            // Убедимся, что мы на странице списка
+            return driver.findElements(By.xpath("//td[contains(., '" + text + "')]")).size() > 0;
         } catch (Exception e) {
             return false;
         }
     }
-    
+
     public int getUserCount() {
-        return users.size();
+        return driver.findElements(By.xpath("//table/tbody/tr[td]")).size();
     }
-    
+
     public UsersPage bulkDelete() {
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//table")));
-        WebElement checkbox = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@aria-label='Select all']")));
-        wait.until(ExpectedConditions.elementToBeClickable(checkbox)).click();
-        wait.until(ExpectedConditions.elementToBeClickable(deleteButton)).click();
-        wait.until(ExpectedConditions.numberOfElementsToBe(By.xpath("//table/tbody/tr[td]"), 0));
+        openUsersPage();
+        if (getUserCount() > 0) {
+            WebElement selectAll = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//input[@aria-label='Select all']/..")));
+            selectAll.click();
+            wait.until(ExpectedConditions.elementToBeClickable(deleteButton)).click();
+            wait.until(ExpectedConditions.numberOfElementsToBe(By.xpath("//table/tbody/tr[td]"), 0));
+        }
         return this;
     }
 }

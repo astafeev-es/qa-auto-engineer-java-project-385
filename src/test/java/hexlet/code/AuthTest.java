@@ -2,7 +2,6 @@ package hexlet.code;
 
 import hexlet.code.pages.login.LoginPage;
 import hexlet.code.pages.DashboardPage;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -5,7 +5,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class TasksPage extends BasePage {
 
-  public TasksPage(WebDriver driver, WebDriverWait wait) {
-    super(driver, wait);
-  }
+    public TasksPage(WebDriver driver, WebDriverWait wait) {
+        super(driver, wait);
+    }
 }

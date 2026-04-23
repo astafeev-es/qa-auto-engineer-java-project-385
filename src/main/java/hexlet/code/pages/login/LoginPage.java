@@ -30,10 +30,10 @@ public class LoginPage extends BasePage {
         wait.until(ExpectedConditions.elementToBeClickable(usernameField));
         usernameField.clear();
         usernameField.sendKeys(username);
-        
+
         passwordField.clear();
         passwordField.sendKeys(password);
-        
+
         signInButton.click();
 
         return new DashboardPage(driver, wait);
