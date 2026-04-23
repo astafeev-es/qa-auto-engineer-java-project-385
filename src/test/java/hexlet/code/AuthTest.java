@@ -24,15 +24,13 @@ public class AuthTest extends BaseTest {
 
     @Test
     public void testSuccessfulLogin() {
-        loginPage.login(RandomStringUtils.secure().nextAlphanumeric(4, 8),
-            RandomStringUtils.secure().nextAlphanumeric(4, 8));
+        loginPage.login(username, password);
         assertTrue(dashboardPage.isProfileVisible());
     }
 
     @Test
     public void testSuccessfulLogout() {
-        loginPage.login(RandomStringUtils.secure().nextAlphanumeric(4, 8),
-                RandomStringUtils.secure().nextAlphanumeric(4, 8))
+        loginPage.login(username, password)
             .logout();
         assertTrue(loginPage.isLoginPageDisplayed());
     }

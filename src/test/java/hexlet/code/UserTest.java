@@ -20,8 +20,8 @@ public class UserTest extends BaseTest {
         loginPage = new LoginPage(driver, wait);
         usersPage = new UsersPage(driver, wait);
         driver.get(baseUrl);
-        loginPage.login(RandomStringUtils.secure().nextAlphanumeric(4, 8), 
-            RandomStringUtils.secure().nextAlphanumeric(4, 8));
+        loginPage.login(username, password)
+            .openUsersPage();
     }
 
     @Test

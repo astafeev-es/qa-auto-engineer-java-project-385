@@ -7,10 +7,10 @@ test:
 	./gradlew test
 
 build:
-    ./gradlew clean build
+	./gradlew clean build
 
 lint:
-    ./gradlew checkstyleMain checkstyleTest
+	./gradlew checkstyleMain checkstyleTest
 
 check:
-    ./gradlew check
+	./gradlew check

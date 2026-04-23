@@ -31,6 +31,8 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
     systemProperty("APP_BASE_URL", System.getenv("APP_BASE_URL") ?: "http://localhost:5173")
+    systemProperty("USERNAME", System.getenv("USERNAME") ?: "aleksei98")
+    systemProperty("PASSWORD", System.getenv("PASSWORD") ?: "[trcktnghjtrn_98")
 }
 
 tasks.withType<DependencyUpdatesTask> {
@@ -53,7 +55,7 @@ checkstyle {
 
 sonar {
     properties {
-        property("sonar.projectKey", "astafeev-es_qa-auto-engineer-java-project-78")
+        property("sonar.projectKey", "astafeev-es_qa-auto-engineer-java-project-385")
         property("sonar.organization", "astafeev-es")
     }
 }
