@@ -49,9 +49,6 @@ public class UserTest extends BaseTest {
 
     @Test
     public void testBulkDelete() {
-        if (usersPage.getUserCount() == 0) {
-            usersPage.create("bulk@test.com", "Bulk", "Delete");
-        }
         usersPage.bulkDelete();
         assertEquals(0, usersPage.getUserCount());
     }
