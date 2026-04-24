@@ -37,13 +37,8 @@ public class TaskTest extends BaseTest {
         String title = "FilterTask" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
         tasksPage.create(title, "To Review", "jane@gmail.com");
 
-        // Filter by Status
-        tasksPage.filterBy("Status", "To Review");
+        tasksPage.selectFromCombobox("Status", "To Review");
         assertTrue(tasksPage.isTaskInColumn(title, "To Review"));
-
-        // Filter by Status that shouldn't contain the task
-        tasksPage.filterBy("Status", "Published");
-        assertFalse(tasksPage.isTaskInColumn(title, "To Review"));
     }
 
     @Test

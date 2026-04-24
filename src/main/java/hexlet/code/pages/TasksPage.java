@@ -37,22 +37,10 @@ public class TasksPage extends BasePage {
         try {
             String xpath = "//div[h6[contains(., '%s')]]//*[@role='button' and contains(., '%s')]"
                 .formatted(columnName, title);
-            return driver.findElements(By.xpath(xpath)).size() > 0;
+            return !wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(xpath))).isEmpty();
         } catch (Exception e) {
             return false;
         }
-    }
-
-    public TasksPage filterBy(String filterName, String value) {
-        selectFromCombobox(filterName, value);
-        // Вместо Thread.sleep используем ожидание исчезновения старых элементов или просто даем время React-у
-        // В идеале тут должно быть ожидание лоадера
-        try {
-            Thread.sleep(500); // Оставляем минимальный sleep для стабильности фильтрации в реактивном UI
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return this;
     }
 
     public TasksPage edit(String title, String newTitle) {
