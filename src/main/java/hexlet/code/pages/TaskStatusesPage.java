@@ -28,14 +28,14 @@ public class TaskStatusesPage extends BasePage {
 
     public TaskStatusesPage openCreatePage() {
         openTaskStatusesPage();
-        wait.until(ExpectedConditions.visibilityOf(createButton)).click();
+        click(createButton);
         return this;
     }
 
     public TaskStatusesPage openStatusSettings(String slug) {
         openTaskStatusesPage();
         String rowXpath = "//tr[td[contains(., '%s')]]".formatted(slug);
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath))).click();
+        click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath))));
         return this;
     }
 
@@ -45,7 +45,7 @@ public class TaskStatusesPage extends BasePage {
         field.clear();
         field.sendKeys(newName);
         // Trigger blur
-        driver.findElement(By.name("slug")).click();
+        click(driver.findElement(By.name("slug")));
 
         submit();
         openTaskStatusesPage();
@@ -56,10 +56,9 @@ public class TaskStatusesPage extends BasePage {
         openTaskStatusesPage();
         String rowXpath = "//tr[td[contains(., '%s')]]".formatted(slug);
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(rowXpath)));
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath + "//input[@type='checkbox']/..")))
-            .click();
+        click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath + "//input[@type='checkbox']/.."))));
 
-        wait.until(ExpectedConditions.elementToBeClickable(deleteButton)).click();
+        click(deleteButton);
         String cellXpath = "//table/tbody/tr/td[contains(., '%s')]".formatted(slug);
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(cellXpath)));
         return this;
@@ -82,8 +81,8 @@ public class TaskStatusesPage extends BasePage {
         if (getStatusCount() > 0) {
             WebElement selectAll = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//input[@aria-label='Select all']/..")));
-            selectAll.click();
-            wait.until(ExpectedConditions.elementToBeClickable(deleteButton)).click();
+            click(selectAll);
+            click(deleteButton);
             wait.until(ExpectedConditions.numberOfElementsToBe(By.xpath("//table/tbody/tr[td]"), 0));
         }
         return this;

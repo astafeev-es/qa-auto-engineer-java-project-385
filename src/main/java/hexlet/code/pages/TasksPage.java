@@ -29,7 +29,7 @@ public class TasksPage extends BasePage {
 
     public TasksPage openCreatePage() {
         openTasksPage();
-        wait.until(ExpectedConditions.visibilityOf(createButton)).click();
+        click(createButton);
         return this;
     }
 
@@ -49,7 +49,7 @@ public class TasksPage extends BasePage {
         field.clear();
         field.sendKeys(newTitle);
         // Trigger blur
-        driver.findElement(By.name("content")).click();
+        click(driver.findElement(By.name("content")));
 
         submit();
         openTasksPage();
@@ -67,13 +67,13 @@ public class TasksPage extends BasePage {
     public TasksPage openTaskEdit(String title) {
         openTasksPage();
         String xpath = "//*[@role='button' and contains(., '%s')]//a[contains(., 'Edit')]".formatted(title);
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath))).click();
+        click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath))));
         return this;
     }
 
     public TasksPage deleteTask(String title) {
         openTaskEdit(title);
-        wait.until(ExpectedConditions.elementToBeClickable(deleteButton)).click();
+        click(deleteButton);
         openTasksPage();
         String xpath = "//*[@role='button' and contains(., '%s')]".formatted(title);
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(xpath)));

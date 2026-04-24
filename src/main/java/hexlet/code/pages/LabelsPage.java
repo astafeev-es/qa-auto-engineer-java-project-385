@@ -26,14 +26,14 @@ public class LabelsPage extends BasePage {
 
     public LabelsPage openCreatePage() {
         openLabelsPage();
-        wait.until(ExpectedConditions.visibilityOf(createButton)).click();
+        click(createButton);
         return this;
     }
 
     public LabelsPage openLabelSettings(String name) {
         openLabelsPage();
         String rowXpath = "//tr[td[contains(., '%s')]]".formatted(name);
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath))).click();
+        click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath))));
         return this;
     }
 
@@ -52,10 +52,9 @@ public class LabelsPage extends BasePage {
         openLabelsPage();
         String rowXpath = "//tr[td[contains(., '%s')]]".formatted(name);
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(rowXpath)));
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath + "//input[@type='checkbox']/..")))
-            .click();
+        click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath + "//input[@type='checkbox']/.."))));
 
-        wait.until(ExpectedConditions.elementToBeClickable(deleteButton)).click();
+        click(deleteButton);
         String cellXpath = "//table/tbody/tr/td[contains(., '%s')]".formatted(name);
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(cellXpath)));
         return this;

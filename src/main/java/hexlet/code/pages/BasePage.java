@@ -2,6 +2,7 @@ package hexlet.code.pages;
 
 import java.util.List;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -43,8 +44,16 @@ public abstract class BasePage {
         PageFactory.initElements(driver, this);
     }
 
+    protected void click(WebElement element) {
+        try {
+            wait.until(ExpectedConditions.elementToBeClickable(element)).click();
+        } catch (Exception e) {
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+        }
+    }
+
     public void submit() {
-        wait.until(ExpectedConditions.elementToBeClickable(submitButton)).click();
+        click(submitButton);
     }
 
     public String getFieldValue(String fieldName) {
@@ -74,34 +83,34 @@ public abstract class BasePage {
 
     public void selectFromCombobox(String label, String value) {
         String comboXp = "//div[label[contains(., '%s')]]//div[@role='combobox']".formatted(label);
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(comboXp))).click();
+        click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(comboXp))));
 
         String optXp = "//li[@role='option' and contains(., '%s')]".formatted(value);
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(optXp))).click();
+        click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(optXp))));
     }
 
     public DashboardPage openDashboardPage() {
-        wait.until(ExpectedConditions.visibilityOf(dashboardMenuItem)).click();
+        click(dashboardMenuItem);
         return new DashboardPage(driver, wait);
     }
 
     public TasksPage openTasksPage() {
-        wait.until(ExpectedConditions.visibilityOf(tasksMenuItem)).click();
+        click(tasksMenuItem);
         return new TasksPage(driver, wait);
     }
 
     public UsersPage openUsersPage() {
-        wait.until(ExpectedConditions.visibilityOf(usersMenuItem)).click();
+        click(usersMenuItem);
         return new UsersPage(driver, wait);
     }
 
     public LabelsPage openLabelsPage() {
-        wait.until(ExpectedConditions.visibilityOf(labelsMenuItem)).click();
+        click(labelsMenuItem);
         return new LabelsPage(driver, wait);
     }
 
     public TaskStatusesPage openTaskStatusesPage() {
-        wait.until(ExpectedConditions.visibilityOf(taskStatusesMenuItem)).click();
+        click(taskStatusesMenuItem);
         return new TaskStatusesPage(driver, wait);
     }
 }

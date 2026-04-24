@@ -31,7 +31,7 @@ public class UsersPage extends BasePage {
 
     public UsersPage openCreatePage() {
         openUsersPage();
-        wait.until(ExpectedConditions.visibilityOf(createButton)).click();
+        click(createButton);
         return this;
     }
 
@@ -43,7 +43,7 @@ public class UsersPage extends BasePage {
     public UsersPage openUserSettings(String email) {
         openUsersPage();
         String rowXpath = "//tr[td[contains(., '%s')]]".formatted(email);
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath))).click();
+        click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath))));
         return this;
     }
 
@@ -68,10 +68,9 @@ public class UsersPage extends BasePage {
         openUsersPage();
         String rowXpath = "//tr[td[contains(., '%s')]]".formatted(email);
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(rowXpath)));
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath + "//input[@type='checkbox']/..")))
-            .click();
+        click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath + "//input[@type='checkbox']/.."))));
 
-        wait.until(ExpectedConditions.elementToBeClickable(deleteButton)).click();
+        click(deleteButton);
         String cellXpath = "//table/tbody/tr/td[contains(., '%s')]".formatted(email);
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(cellXpath)));
         return this;
@@ -94,8 +93,8 @@ public class UsersPage extends BasePage {
         if (getUserCount() > 0) {
             WebElement selectAll = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//input[@aria-label='Select all']/..")));
-            selectAll.click();
-            wait.until(ExpectedConditions.elementToBeClickable(deleteButton)).click();
+            click(selectAll);
+            click(deleteButton);
             wait.until(ExpectedConditions.numberOfElementsToBe(By.xpath("//table/tbody/tr[td]"), 0));
         }
         return this;
