@@ -30,6 +30,11 @@ jobs:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
+      - name: Start Application
+        run: |
+          docker run -d --rm -p 5173:5173 hexletprojects/qa_auto_java_testing_kanban_board_project_ru_app
+          # Wait for the app to be ready
+          timeout 60s bash -c 'until curl -s http://localhost:5173 > /dev/null; do sleep 1; done'
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
