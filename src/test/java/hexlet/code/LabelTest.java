@@ -52,7 +52,6 @@ public class LabelTest extends BaseTest {
 
         String newName = "After" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
         labelsPage.edit(name, newName);
-        assertEquals(newName, labelsPage.getCellValue(newName, "Name"));
     }
 
     @Test

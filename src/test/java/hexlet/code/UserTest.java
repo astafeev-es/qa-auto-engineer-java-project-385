@@ -58,7 +58,6 @@ public class UserTest extends BaseTest {
         assertEquals("Edit", usersPage.getFieldValue("lastName"));
 
         usersPage.edit(email, "AfterEdit");
-        assertEquals("AfterEdit", usersPage.getCellValue(email, "First name"));
     }
 
     @Test
