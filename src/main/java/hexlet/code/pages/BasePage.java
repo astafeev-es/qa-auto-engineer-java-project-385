@@ -44,7 +44,27 @@ public abstract class BasePage {
     }
 
     protected void click(WebElement element) {
-        wait.until(ExpectedConditions.elementToBeClickable(element)).click();
+        int attempts = 0;
+        while (attempts < 3) {
+            try {
+                wait.until(ExpectedConditions.elementToBeClickable(element)).click();
+                return;
+            } catch (org.openqa.selenium.ElementClickInterceptedException e) {
+                // Wait for any MUI Snackbars (notifications) to disappear
+                try {
+                    wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("MuiSnackbar-root")));
+                } catch (Exception ignored) {
+                    // Fallback: short wait if snackbar not found or already gone
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+                attempts++;
+            }
+        }
+        element.click(); // Final attempt
     }
 
     public void submit() {
