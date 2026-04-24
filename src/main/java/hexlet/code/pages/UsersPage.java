@@ -3,10 +3,23 @@ package hexlet.code.pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class UsersPage extends BasePage {
+
+    @FindBy(name = "email")
+    private WebElement emailInput;
+
+    @FindBy(name = "firstName")
+    private WebElement firstNameInput;
+
+    @FindBy(name = "lastName")
+    private WebElement lastNameInput;
+
+    @FindBy(xpath = "//input[@aria-label='Select all']/..")
+    private WebElement selectAllCheckbox;
 
     public UsersPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
@@ -20,13 +33,13 @@ public class UsersPage extends BasePage {
     }
 
     public void fillForm(String email, String firstName, String lastName) {
-        WebElement emailField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("email")));
-        emailField.clear();
-        emailField.sendKeys(email);
-        driver.findElement(By.name("firstName")).clear();
-        driver.findElement(By.name("firstName")).sendKeys(firstName);
-        driver.findElement(By.name("lastName")).clear();
-        driver.findElement(By.name("lastName")).sendKeys(lastName);
+        wait.until(ExpectedConditions.visibilityOf(emailInput));
+        emailInput.clear();
+        emailInput.sendKeys(email);
+        firstNameInput.clear();
+        firstNameInput.sendKeys(firstName);
+        lastNameInput.clear();
+        lastNameInput.sendKeys(lastName);
     }
 
     public UsersPage openCreatePage() {
@@ -50,14 +63,13 @@ public class UsersPage extends BasePage {
     public UsersPage edit(String email, String newFirstName) {
         openUserSettings(email);
 
-        WebElement field = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("firstName")));
-        field.clear();
-        field.sendKeys(newFirstName);
+        wait.until(ExpectedConditions.visibilityOf(firstNameInput));
+        firstNameInput.clear();
+        firstNameInput.sendKeys(newFirstName);
 
-        WebElement last = driver.findElement(By.name("lastName"));
-        String oldLast = last.getAttribute("value");
-        last.clear();
-        last.sendKeys(oldLast + "Updated");
+        String oldLast = lastNameInput.getAttribute("value");
+        lastNameInput.clear();
+        lastNameInput.sendKeys(oldLast + "Updated");
 
         submit();
         openUsersPage();
@@ -91,9 +103,7 @@ public class UsersPage extends BasePage {
     public UsersPage bulkDelete() {
         openUsersPage();
         if (getUserCount() > 0) {
-            WebElement selectAll = wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//input[@aria-label='Select all']/..")));
-            click(selectAll);
+            click(selectAllCheckbox);
             click(deleteButton);
             wait.until(ExpectedConditions.numberOfElementsToBe(By.xpath("//table/tbody/tr[td]"), 0));
         }

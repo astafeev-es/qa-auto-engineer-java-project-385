@@ -1,6 +1,5 @@
 package hexlet.code;
 
-import hexlet.code.pages.login.LoginPage;
 import hexlet.code.pages.TaskStatusesPage;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,18 +11,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TaskStatusTest extends BaseTest {
 
-    private LoginPage loginPage;
     private TaskStatusesPage statusPage;
 
     @BeforeEach
     @Override
     public void setUp() {
         super.setUp();
-        loginPage = new LoginPage(driver, wait);
         statusPage = new TaskStatusesPage(driver, wait);
-        driver.get(baseUrl);
-        loginPage.login(username, password)
-            .openTaskStatusesPage();
+        login();
+        statusPage.openTaskStatusesPage();
     }
 
     @Test
@@ -31,8 +27,8 @@ public class TaskStatusTest extends BaseTest {
         String name = "Name" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
         String slug = "slug" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
         statusPage.create(name, slug);
-        assertTrue(statusPage.isStatusPresent(name));
-        assertTrue(statusPage.isStatusPresent(slug));
+        assertTrue(statusPage.isStatusPresent(name), "Created status name should be present in the list");
+        assertTrue(statusPage.isStatusPresent(slug), "Created status slug should be present in the list");
     }
 
     @Test
@@ -41,11 +37,11 @@ public class TaskStatusTest extends BaseTest {
         String slug = "slug" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
         statusPage.create(name, slug);
 
-        assertTrue(statusPage.isColumnVisible("Name"));
-        assertTrue(statusPage.isColumnVisible("Slug"));
+        assertTrue(statusPage.isColumnVisible("Name"), "Name column should be visible");
+        assertTrue(statusPage.isColumnVisible("Slug"), "Slug column should be visible");
 
-        assertEquals(name, statusPage.getCellValue(slug, "Name"));
-        assertEquals(slug, statusPage.getCellValue(slug, "Slug"));
+        assertEquals(name, statusPage.getCellValue(slug, "Name"), "Status name cell value should match");
+        assertEquals(slug, statusPage.getCellValue(slug, "Slug"), "Status slug cell value should match");
     }
 
     @Test
@@ -55,11 +51,12 @@ public class TaskStatusTest extends BaseTest {
         statusPage.create(name, slug);
 
         statusPage.openStatusSettings(slug);
-        assertEquals(name, statusPage.getFieldValue("name"));
-        assertEquals(slug, statusPage.getFieldValue("slug"));
+        assertEquals(name, statusPage.getFieldValue("name"), "Name field should contain original status name");
+        assertEquals(slug, statusPage.getFieldValue("slug"), "Slug field should contain original status slug");
 
         String newName = "After" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
         statusPage.edit(slug, newName);
+        assertTrue(statusPage.isStatusPresent(newName), "Updated status name should be present in the list");
     }
 
     @Test
@@ -68,12 +65,12 @@ public class TaskStatusTest extends BaseTest {
         String slug = "del" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
         statusPage.create(name, slug);
         statusPage.deleteStatus(slug);
-        assertFalse(statusPage.isStatusPresent(slug));
+        assertFalse(statusPage.isStatusPresent(slug), "Deleted status slug should not be present in the list");
     }
 
     @Test
     public void testBulkDelete() {
         statusPage.bulkDelete();
-        assertEquals(0, statusPage.getStatusCount());
+        assertEquals(0, statusPage.getStatusCount(), "Status list should be empty after bulk delete");
     }
 }

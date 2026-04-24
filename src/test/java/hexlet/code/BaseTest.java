@@ -1,5 +1,5 @@
 package hexlet.code;
-
+import hexlet.code.pages.login.LoginPage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.WebDriver;
@@ -29,8 +29,13 @@ public abstract class BaseTest {
         options.addArguments("--window-size=1920,1080");
 
         driver = new ChromeDriver(options);
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
         wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+    }
+
+    protected void login() {
+        LoginPage loginPage = new LoginPage(driver, wait);
+        driver.get(baseUrl);
+        loginPage.login(username, password);
     }
 
     @AfterEach

@@ -3,10 +3,14 @@ package hexlet.code.pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class LabelsPage extends BasePage {
+
+    @FindBy(name = "name")
+    private WebElement nameInput;
 
     public LabelsPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
@@ -20,8 +24,8 @@ public class LabelsPage extends BasePage {
     }
 
     public void fillForm(String name) {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("name"))).clear();
-        driver.findElement(By.name("name")).sendKeys(name);
+        wait.until(ExpectedConditions.visibilityOf(nameInput)).clear();
+        nameInput.sendKeys(name);
     }
 
     public LabelsPage openCreatePage() {
@@ -39,9 +43,8 @@ public class LabelsPage extends BasePage {
 
     public LabelsPage edit(String name, String newName) {
         openLabelSettings(name);
-        WebElement field = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("name")));
-        field.clear();
-        field.sendKeys(newName);
+        wait.until(ExpectedConditions.visibilityOf(nameInput)).clear();
+        nameInput.sendKeys(newName);
 
         submit();
         openLabelsPage();

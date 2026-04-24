@@ -1,6 +1,5 @@
 package hexlet.code;
 
-import hexlet.code.pages.login.LoginPage;
 import hexlet.code.pages.TasksPage;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,25 +10,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TaskTest extends BaseTest {
 
-    private LoginPage loginPage;
     private TasksPage tasksPage;
 
     @BeforeEach
     @Override
     public void setUp() {
         super.setUp();
-        loginPage = new LoginPage(driver, wait);
         tasksPage = new TasksPage(driver, wait);
-        driver.get(baseUrl);
-        loginPage.login(username, password)
-            .openTasksPage();
+        login();
+        tasksPage.openTasksPage();
     }
 
     @Test
     public void testTaskCreation() {
         String title = "Task" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
         tasksPage.create(title, "Draft", "jane@gmail.com");
-        assertTrue(tasksPage.isTaskInColumn(title, "Draft"));
+        assertTrue(tasksPage.isTaskInColumn(title, "Draft"), "Created task should be present in the 'Draft' column");
     }
 
     @Test
@@ -38,7 +34,8 @@ public class TaskTest extends BaseTest {
         tasksPage.create(title, "To Review", "jane@gmail.com");
 
         tasksPage.selectFromCombobox("Status", "To Review");
-        assertTrue(tasksPage.isTaskInColumn(title, "To Review"));
+        assertTrue(tasksPage.isTaskInColumn(title, "To Review"),
+            "Task should be visible in 'To Review' column after filtration");
     }
 
     @Test
@@ -48,8 +45,7 @@ public class TaskTest extends BaseTest {
 
         String newTitle = "UpdatedTask" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
         tasksPage.edit(title, newTitle);
-        // Так как в приложении баг с редактированием, этот тест может упасть
-        assertTrue(tasksPage.isTaskInColumn(newTitle, "Draft"));
+        assertTrue(tasksPage.isTaskInColumn(newTitle, "Draft"), "Updated task title should be present in the column");
     }
 
     @Test
@@ -58,7 +54,8 @@ public class TaskTest extends BaseTest {
         tasksPage.create(title, "Draft", "jane@gmail.com");
 
         tasksPage.moveTask(title, "Published");
-        assertTrue(tasksPage.isTaskInColumn(title, "Published"));
+        assertTrue(tasksPage.isTaskInColumn(title, "Published"),
+            "Task should be present in the 'Published' column after move");
     }
 
     @Test
@@ -67,6 +64,6 @@ public class TaskTest extends BaseTest {
         tasksPage.create(title, "Draft", "jane@gmail.com");
 
         tasksPage.deleteTask(title);
-        assertFalse(tasksPage.isTaskInColumn(title, "Draft"));
+        assertFalse(tasksPage.isTaskInColumn(title, "Draft"), "Deleted task should not be present in the column");
     }
 }

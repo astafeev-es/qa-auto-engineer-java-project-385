@@ -20,8 +20,8 @@ public class DashboardPage extends BasePage {
     }
 
     public LoginPage logout() {
-        wait.until(ExpectedConditions.elementToBeClickable(profileButton)).click();
-        wait.until(ExpectedConditions.visibilityOf(logoutButton)).click();
+        click(profileButton);
+        click(logoutButton);
 
         return new LoginPage(driver, wait);
     }

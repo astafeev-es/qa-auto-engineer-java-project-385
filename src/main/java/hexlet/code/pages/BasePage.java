@@ -2,7 +2,6 @@ package hexlet.code.pages;
 
 import java.util.List;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -45,11 +44,7 @@ public abstract class BasePage {
     }
 
     protected void click(WebElement element) {
-        try {
-            wait.until(ExpectedConditions.elementToBeClickable(element)).click();
-        } catch (Exception e) {
-            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
-        }
+        wait.until(ExpectedConditions.elementToBeClickable(element)).click();
     }
 
     public void submit() {

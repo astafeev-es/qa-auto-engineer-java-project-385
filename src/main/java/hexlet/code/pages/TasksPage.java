@@ -3,10 +3,17 @@ package hexlet.code.pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class TasksPage extends BasePage {
+
+    @FindBy(name = "title")
+    private WebElement titleInput;
+
+    @FindBy(name = "content")
+    private WebElement contentInput;
 
     public TasksPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
@@ -20,8 +27,8 @@ public class TasksPage extends BasePage {
     }
 
     public void fillForm(String title, String status, String assignee) {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("title"))).clear();
-        driver.findElement(By.name("title")).sendKeys(title);
+        wait.until(ExpectedConditions.visibilityOf(titleInput)).clear();
+        titleInput.sendKeys(title);
 
         selectFromCombobox("Status", status);
         selectFromCombobox("Assignee", assignee);
@@ -45,11 +52,10 @@ public class TasksPage extends BasePage {
 
     public TasksPage edit(String title, String newTitle) {
         openTaskEdit(title);
-        WebElement field = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("title")));
-        field.clear();
-        field.sendKeys(newTitle);
+        wait.until(ExpectedConditions.visibilityOf(titleInput)).clear();
+        titleInput.sendKeys(newTitle);
         // Trigger blur
-        click(driver.findElement(By.name("content")));
+        click(contentInput);
 
         submit();
         openTasksPage();

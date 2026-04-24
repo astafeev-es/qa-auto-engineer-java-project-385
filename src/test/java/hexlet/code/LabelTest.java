@@ -1,6 +1,5 @@
 package hexlet.code;
 
-import hexlet.code.pages.login.LoginPage;
 import hexlet.code.pages.LabelsPage;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,25 +11,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LabelTest extends BaseTest {
 
-    private LoginPage loginPage;
     private LabelsPage labelsPage;
 
     @BeforeEach
     @Override
     public void setUp() {
         super.setUp();
-        loginPage = new LoginPage(driver, wait);
         labelsPage = new LabelsPage(driver, wait);
-        driver.get(baseUrl);
-        loginPage.login(username, password)
-            .openLabelsPage();
+        login();
+        labelsPage.openLabelsPage();
     }
 
     @Test
     public void testLabelCreation() {
         String name = "Label" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
         labelsPage.create(name);
-        assertTrue(labelsPage.isLabelPresent(name));
+        assertTrue(labelsPage.isLabelPresent(name), "Created label should be present in the labels list");
     }
 
     @Test
@@ -38,8 +34,8 @@ public class LabelTest extends BaseTest {
         String name = "List" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
         labelsPage.create(name);
 
-        assertTrue(labelsPage.isLabelPresent(name));
-        assertEquals(name, labelsPage.getCellValue(name, "Name"));
+        assertTrue(labelsPage.isLabelPresent(name), "Label should be present in the list");
+        assertEquals(name, labelsPage.getCellValue(name, "Name"), "Label name cell should match created label name");
     }
 
     @Test
@@ -48,10 +44,11 @@ public class LabelTest extends BaseTest {
         labelsPage.create(name);
 
         labelsPage.openLabelSettings(name);
-        assertEquals(name, labelsPage.getFieldValue("name"));
+        assertEquals(name, labelsPage.getFieldValue("name"), "Name field should contain the original label name");
 
         String newName = "After" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
         labelsPage.edit(name, newName);
+        assertTrue(labelsPage.isLabelPresent(newName), "Updated label name should be present in the list");
     }
 
     @Test
@@ -59,6 +56,6 @@ public class LabelTest extends BaseTest {
         String name = "Delete" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
         labelsPage.create(name);
         labelsPage.deleteLabel(name);
-        assertFalse(labelsPage.isLabelPresent(name));
+        assertFalse(labelsPage.isLabelPresent(name), "Deleted label should not be present in the list");
     }
 }
