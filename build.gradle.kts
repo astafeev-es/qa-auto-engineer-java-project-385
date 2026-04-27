@@ -30,9 +30,7 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-    environment("APP_BASE_URL", providers.environmentVariable("APP_BASE_URL").getOrElse("http://localhost:5173"))
-    environment("USERNAME", providers.environmentVariable("USERNAME").getOrElse("aleksei98"))
-    environment("PASSWORD", providers.environmentVariable("PASSWORD").getOrElse("[trcktnghjtrn_98"))
+    environment(System.getenv())
 }
 
 tasks.withType<DependencyUpdatesTask> {
