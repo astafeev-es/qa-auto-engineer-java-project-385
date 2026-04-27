@@ -2,7 +2,6 @@ package hexlet.code.pages;
 
 import hexlet.code.pages.login.LoginPage;
 import java.util.List;
-import java.util.stream.IntStream;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -90,10 +89,15 @@ public abstract class BasePage {
 
     public String getCellValue(String rowSearchText, String columnName) {
         List<WebElement> headers = driver.findElements(By.xpath("//th"));
-        int index = IntStream.range(0, headers.size())
-                .filter(i -> headers.get(i).getText().contains(columnName))
-                .findFirst()
-                .orElse(-1);
+        int index = -1;
+        int currentIndex = 0;
+        for (WebElement header : headers) {
+            if (header.getText().contains(columnName)) {
+                index = currentIndex;
+                break;
+            }
+            currentIndex++;
+        }
 
         if (index == -1) {
             return null;
