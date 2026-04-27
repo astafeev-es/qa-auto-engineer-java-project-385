@@ -18,19 +18,19 @@ public abstract class BaseTest {
 
     @BeforeEach
     public void setUp() {
-        baseUrl = System.getProperty("APP_BASE_URL", System.getenv("APP_BASE_URL"));
+        baseUrl = System.getenv("APP_BASE_URL");
         if (baseUrl == null) {
-            baseUrl = "http://localhost:5173";
+            baseUrl = System.getProperty("APP_BASE_URL", "http://localhost:5173");
         }
 
-        username = System.getProperty("USERNAME", System.getenv("USERNAME"));
+        username = System.getenv("USERNAME");
         if (username == null) {
-            username = "aleksei98";
+            username = System.getProperty("USERNAME", "aleksei98");
         }
 
-        password = System.getProperty("PASSWORD", System.getenv("PASSWORD"));
+        password = System.getenv("PASSWORD");
         if (password == null) {
-            password = "[trcktnghjtrn_98";
+            password = System.getProperty("PASSWORD", "[trcktnghjtrn_98");
         }
 
         ChromeOptions options = new ChromeOptions();
