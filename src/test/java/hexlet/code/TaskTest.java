@@ -57,7 +57,6 @@ public class TaskTest extends BaseTest {
 
         assertTrue(tasksPage.getTaskCount() > 0, "Task board should contain records before filtering");
 
-        // Filter by Status
         tasksPage.selectFromCombobox("Status", "To Review");
         tasksPage.waitForTaskToDisappear(otherTitle);
         assertTrue(tasksPage.isTaskInColumn(title, "To Review"),
@@ -65,10 +64,8 @@ public class TaskTest extends BaseTest {
         assertFalse(tasksPage.isTaskInColumn(otherTitle, "Draft"),
             "Irrelevant task should not be visible after filtration by Status");
 
-        // Reset filter - assume clicking clear or selecting empty works. Or just reload page
         tasksPage.open("tasks");
 
-        // Filter by Assignee
         tasksPage.selectFromCombobox("Assignee", "jane@gmail.com");
         tasksPage.waitForTaskToDisappear(otherTitle);
         assertTrue(tasksPage.isTaskInColumn(title, "To Review"),
@@ -78,7 +75,6 @@ public class TaskTest extends BaseTest {
 
         tasksPage.open("tasks");
 
-        // Filter by Label
         tasksPage.selectFromCombobox("Label", labelName); // Could be 'Labels' or 'Label'
         tasksPage.waitForTaskToDisappear(otherTitle);
         assertTrue(tasksPage.isTaskInColumn(title, "To Review"),

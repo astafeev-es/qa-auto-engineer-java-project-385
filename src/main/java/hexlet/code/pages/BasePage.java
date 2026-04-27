@@ -1,6 +1,5 @@
 package hexlet.code.pages;
 
-import hexlet.code.pages.login.LoginPage;
 import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -57,21 +56,15 @@ public abstract class BasePage {
                 wait.until(ExpectedConditions.elementToBeClickable(element)).click();
                 return;
             } catch (org.openqa.selenium.ElementClickInterceptedException e) {
-                // Wait for any MUI Snackbars (notifications) to disappear
                 try {
                     wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("MuiSnackbar-root")));
                 } catch (Exception ignored) {
-                    // Fallback: short wait if snackbar not found or already gone
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException ie) {
-                        Thread.currentThread().interrupt();
-                    }
+                    // do nothing
                 }
                 attempts++;
             }
         }
-        element.click(); // Final attempt
+        element.click();
     }
 
     public void submit() {

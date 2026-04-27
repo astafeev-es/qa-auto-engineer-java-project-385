@@ -78,7 +78,6 @@ public class TasksPage extends BasePage {
         openTaskEdit(title);
         wait.until(ExpectedConditions.visibilityOf(titleInput)).clear();
         titleInput.sendKeys(newTitle);
-        // Trigger blur
         click(contentInput);
 
         submit();

@@ -60,7 +60,6 @@ public class TaskStatusesPage extends BasePage {
         openStatusSettings(slug);
         wait.until(ExpectedConditions.visibilityOf(nameInput));
         replaceInputValue(nameInput, newName);
-        // Trigger blur
         click(slugInput);
 
         submit();

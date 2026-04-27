@@ -1,7 +1,5 @@
-package hexlet.code.pages.login;
+package hexlet.code.pages;
 
-import hexlet.code.pages.BasePage;
-import hexlet.code.pages.DashboardPage;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;

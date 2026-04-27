@@ -1,7 +1,7 @@
 package hexlet.code;
 
-import hexlet.code.pages.login.LoginPage;
 import hexlet.code.pages.DashboardPage;
+import hexlet.code.pages.LoginPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

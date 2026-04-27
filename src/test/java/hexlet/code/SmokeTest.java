@@ -1,6 +1,6 @@
 package hexlet.code;
 
-import hexlet.code.pages.login.LoginPage;
+import hexlet.code.pages.LoginPage;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
