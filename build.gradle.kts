@@ -30,9 +30,9 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-    System.getenv("APP_BASE_URL")?.let { systemProperty("APP_BASE_URL", it) }
-    System.getenv("USERNAME")?.let { systemProperty("USERNAME", it) }
-    System.getenv("PASSWORD")?.let { systemProperty("PASSWORD", it) }
+    environment("APP_BASE_URL", System.getenv("APP_BASE_URL") ?: "http://localhost:5173")
+    environment("USERNAME", System.getenv("USERNAME") ?: "aleksei98")
+    environment("PASSWORD", System.getenv("PASSWORD") ?: "[trcktnghjtrn_98")
 }
 
 tasks.withType<DependencyUpdatesTask> {
