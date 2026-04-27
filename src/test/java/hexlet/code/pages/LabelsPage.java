@@ -34,6 +34,11 @@ public class LabelsPage extends BasePage {
         return this;
     }
 
+    public boolean isCreateFormDisplayed() {
+        return wait.until(ExpectedConditions.visibilityOf(nameInput)).isDisplayed()
+            && wait.until(ExpectedConditions.visibilityOf(submitButton)).isDisplayed();
+    }
+
     public LabelsPage openLabelSettings(String name) {
         open("labels");
         String rowXpath = "//tr[td[contains(., '%s')]]".formatted(name);
@@ -69,5 +74,9 @@ public class LabelsPage extends BasePage {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public int getLabelCount() {
+        return driver.findElements(By.xpath("//table/tbody/tr[td]")).size();
     }
 }

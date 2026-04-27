@@ -1,6 +1,7 @@
 package hexlet.code.pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -42,6 +43,12 @@ public class TaskStatusesPage extends BasePage {
         return this;
     }
 
+    public boolean isCreateFormDisplayed() {
+        return wait.until(ExpectedConditions.visibilityOf(nameInput)).isDisplayed()
+            && wait.until(ExpectedConditions.visibilityOf(slugInput)).isDisplayed()
+            && wait.until(ExpectedConditions.visibilityOf(submitButton)).isDisplayed();
+    }
+
     public TaskStatusesPage openStatusSettings(String slug) {
         open("task statuses");
         String rowXpath = "//tr[td[contains(., '%s')]]".formatted(slug);
@@ -51,14 +58,24 @@ public class TaskStatusesPage extends BasePage {
 
     public TaskStatusesPage edit(String slug, String newName) {
         openStatusSettings(slug);
-        wait.until(ExpectedConditions.visibilityOf(nameInput)).clear();
-        nameInput.sendKeys(newName);
+        wait.until(ExpectedConditions.visibilityOf(nameInput));
+        replaceInputValue(nameInput, newName);
         // Trigger blur
         click(slugInput);
 
         submit();
         open("task statuses");
         return this;
+    }
+
+    private void replaceInputValue(WebElement input, String value) {
+        String currentValue = input.getAttribute("value");
+        input.click();
+        input.sendKeys(Keys.END);
+        for (int index = 0; index < currentValue.length(); index++) {
+            input.sendKeys(Keys.BACK_SPACE);
+        }
+        input.sendKeys(value);
     }
 
     public TaskStatusesPage deleteStatus(String slug) {

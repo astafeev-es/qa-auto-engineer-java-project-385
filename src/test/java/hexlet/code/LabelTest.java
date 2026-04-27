@@ -25,7 +25,11 @@ public class LabelTest extends BaseTest {
     @Test
     public void testLabelCreation() {
         String name = "Label" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
-        labelsPage.create(name);
+        labelsPage.openCreatePage();
+        assertTrue(labelsPage.isCreateFormDisplayed(), "Label creation form should be visible with required fields");
+        labelsPage.fillForm(name);
+        labelsPage.submit();
+        labelsPage.open("labels");
         assertTrue(labelsPage.isLabelPresent(name), "Created label should be present in the labels list");
     }
 
@@ -34,6 +38,8 @@ public class LabelTest extends BaseTest {
         String name = "List" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
         labelsPage.create(name);
 
+        assertTrue(labelsPage.getLabelCount() > 0, "Labels table should contain records");
+        assertTrue(labelsPage.isColumnVisible("Name"), "Name column should be visible");
         assertTrue(labelsPage.isLabelPresent(name), "Label should be present in the list");
         assertEquals(name, labelsPage.getCellValue(name, "Name"), "Label name cell should match created label name");
     }

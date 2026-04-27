@@ -21,10 +21,10 @@ java {
 }
 
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.14.3"))
+    testImplementation(platform("org.junit:junit-bom:6.0.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
-    implementation("org.seleniumhq.selenium:selenium-java:4.43.0")
-    implementation("org.apache.commons:commons-lang3:3.20.0")
+    testImplementation("org.seleniumhq.selenium:selenium-java:4.40.0")
+    testImplementation("org.apache.commons:commons-lang3:3.20.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

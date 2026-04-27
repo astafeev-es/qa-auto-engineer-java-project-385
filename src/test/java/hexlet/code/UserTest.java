@@ -25,7 +25,11 @@ public class UserTest extends BaseTest {
     @Test
     public void testUserCreation() {
         String email = "create" + RandomStringUtils.secure().nextAlphanumeric(4, 8) + "@test.com";
-        usersPage.create(email, "John", "Doe");
+        usersPage.openCreatePage();
+        assertTrue(usersPage.isCreateFormDisplayed(), "User creation form should be visible with all required fields");
+        usersPage.fillForm(email, "John", "Doe");
+        usersPage.submit();
+        usersPage.open("users");
         assertTrue(usersPage.isUserPresent(email), "Created user should be present in the user list");
     }
 
@@ -55,7 +59,12 @@ public class UserTest extends BaseTest {
         assertEquals("Edit", usersPage.getFieldValue("lastName"), "Last name field should contain correct value");
 
         usersPage.edit(email, "AfterEdit");
-        assertTrue(usersPage.isUserPresent("AfterEdit"), "Updated user name should be present in the list");
+        assertEquals(email, usersPage.getCellValue(email, "Email"),
+            "Updated row should still belong to the same user email");
+        assertEquals("AfterEdit", usersPage.getCellValue(email, "First name"),
+            "First name should be updated in the user list");
+        assertEquals("EditUpdated", usersPage.getCellValue(email, "Last name"),
+            "Last name should contain the saved updated value");
     }
 
     @Test
@@ -77,7 +86,16 @@ public class UserTest extends BaseTest {
 
     @Test
     public void testBulkDelete() {
+        String firstEmail = "bulk" + RandomStringUtils.secure().nextAlphanumeric(4, 8) + "@test.com";
+        String secondEmail = "bulk" + RandomStringUtils.secure().nextAlphanumeric(4, 8) + "@test.com";
+
+        usersPage.create(firstEmail, "Bulk", "One");
+        usersPage.create(secondEmail, "Bulk", "Two");
+
+        assertTrue(usersPage.getUserCount() > 0, "User list should contain records before bulk delete");
         usersPage.bulkDelete();
         assertEquals(0, usersPage.getUserCount(), "User list should be empty after bulk delete");
+        assertFalse(usersPage.isUserPresent(firstEmail), "First created user should be removed by bulk delete");
+        assertFalse(usersPage.isUserPresent(secondEmail), "Second created user should be removed by bulk delete");
     }
 }

@@ -1,6 +1,7 @@
 package hexlet.code.pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -48,6 +49,13 @@ public class UsersPage extends BasePage {
         return this;
     }
 
+    public boolean isCreateFormDisplayed() {
+        return wait.until(ExpectedConditions.visibilityOf(emailInput)).isDisplayed()
+            && wait.until(ExpectedConditions.visibilityOf(firstNameInput)).isDisplayed()
+            && wait.until(ExpectedConditions.visibilityOf(lastNameInput)).isDisplayed()
+            && wait.until(ExpectedConditions.visibilityOf(submitButton)).isDisplayed();
+    }
+
     public String getErrorMessage() {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(
             By.className("MuiFormHelperText-root"))).getText();
@@ -64,16 +72,24 @@ public class UsersPage extends BasePage {
         openUserSettings(email);
 
         wait.until(ExpectedConditions.visibilityOf(firstNameInput));
-        firstNameInput.clear();
-        firstNameInput.sendKeys(newFirstName);
+        replaceInputValue(firstNameInput, newFirstName);
 
         String oldLast = lastNameInput.getAttribute("value");
-        lastNameInput.clear();
-        lastNameInput.sendKeys(oldLast + "Updated");
+        replaceInputValue(lastNameInput, oldLast + "Updated");
 
         submit();
         open("users");
         return this;
+    }
+
+    private void replaceInputValue(WebElement input, String value) {
+        String currentValue = input.getAttribute("value");
+        input.click();
+        input.sendKeys(Keys.END);
+        for (int index = 0; index < currentValue.length(); index++) {
+            input.sendKeys(Keys.BACK_SPACE);
+        }
+        input.sendKeys(value);
     }
 
     public UsersPage deleteUser(String email) {

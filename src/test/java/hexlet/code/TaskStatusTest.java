@@ -26,7 +26,12 @@ public class TaskStatusTest extends BaseTest {
     public void testStatusCreation() {
         String name = "Name" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
         String slug = "slug" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
-        statusPage.create(name, slug);
+        statusPage.openCreatePage();
+        assertTrue(statusPage.isCreateFormDisplayed(),
+            "Status creation form should be visible with all required fields");
+        statusPage.fillForm(name, slug);
+        statusPage.submit();
+        statusPage.open("task statuses");
         assertTrue(statusPage.isStatusPresent(name), "Created status name should be present in the list");
         assertTrue(statusPage.isStatusPresent(slug), "Created status slug should be present in the list");
     }
@@ -56,7 +61,10 @@ public class TaskStatusTest extends BaseTest {
 
         String newName = "After" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
         statusPage.edit(slug, newName);
-        assertTrue(statusPage.isStatusPresent(newName), "Updated status name should be present in the list");
+        assertEquals(newName, statusPage.getCellValue(slug, "Name"),
+            "Updated status row should contain the saved name");
+        assertEquals(slug, statusPage.getCellValue(slug, "Slug"),
+            "Updated status row should keep the same slug");
     }
 
     @Test
@@ -70,7 +78,18 @@ public class TaskStatusTest extends BaseTest {
 
     @Test
     public void testBulkDelete() {
+        String firstName = "Bulk" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
+        String firstSlug = "bulk" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
+        String secondName = "Bulk" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
+        String secondSlug = "bulk" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
+
+        statusPage.create(firstName, firstSlug);
+        statusPage.create(secondName, secondSlug);
+
+        assertTrue(statusPage.getStatusCount() > 0, "Status list should contain records before bulk delete");
         statusPage.bulkDelete();
         assertEquals(0, statusPage.getStatusCount(), "Status list should be empty after bulk delete");
+        assertFalse(statusPage.isStatusPresent(firstSlug), "First created status should be removed by bulk delete");
+        assertFalse(statusPage.isStatusPresent(secondSlug), "Second created status should be removed by bulk delete");
     }
 }

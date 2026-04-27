@@ -40,6 +40,15 @@ public class TasksPage extends BasePage {
         return this;
     }
 
+    public boolean isCreateFormDisplayed() {
+        return wait.until(ExpectedConditions.visibilityOf(titleInput)).isDisplayed()
+            && wait.until(ExpectedConditions.visibilityOf(submitButton)).isDisplayed()
+            && wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//*[contains(normalize-space(.), 'Assignee')]"))).isDisplayed()
+            && wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//*[contains(normalize-space(.), 'Status')]"))).isDisplayed();
+    }
+
     public boolean isTaskInColumn(String title, String columnName) {
         try {
             String xpath = "//div[h6[contains(., '%s')]]//*[@role='button' and contains(., '%s')]"
@@ -48,6 +57,21 @@ public class TasksPage extends BasePage {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public boolean isTaskPresent(String title) {
+        try {
+            String xpath = "//*[@data-rfd-draggable-id and contains(., '%s')]".formatted(title);
+            return !wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(xpath))).isEmpty();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean isColumnVisible(String columnName) {
+        String xpath = "//h6[contains(., '" + columnName + "')]";
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)))
+            .isDisplayed();
     }
 
     public TasksPage edit(String title, String newTitle) {
@@ -81,13 +105,19 @@ public class TasksPage extends BasePage {
         openTaskEdit(title);
         click(deleteButton);
         open("tasks");
-        String xpath = "//*[@role='button' and contains(., '%s')]".formatted(title);
+        String xpath = "//*[@data-rfd-draggable-id and contains(., '%s')]".formatted(title);
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(xpath)));
+        return this;
+    }
+
+    public TasksPage waitForTaskToDisappear(String title) {
+        String xpath = "//*[@data-rfd-draggable-id and contains(., '%s')]".formatted(title);
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(xpath)));
         return this;
     }
 
     public int getTaskCount() {
-        String xpath = "//div[@role='main']//*[@role='button' and contains(@data-rfd-draggable-id, '')]";
+        String xpath = "//*[@data-rfd-draggable-id]";
         return driver.findElements(By.xpath(xpath)).size();
     }
 }
