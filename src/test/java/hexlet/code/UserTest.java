@@ -19,7 +19,7 @@ public class UserTest extends BaseTest {
         super.setUp();
         usersPage = new UsersPage(driver, wait);
         login();
-        usersPage.openUsersPage();
+        usersPage.open("users");
     }
 
     @Test

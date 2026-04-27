@@ -19,7 +19,7 @@ public class LabelTest extends BaseTest {
         super.setUp();
         labelsPage = new LabelsPage(driver, wait);
         login();
-        labelsPage.openLabelsPage();
+        labelsPage.open("labels");
     }
 
     @Test

@@ -29,7 +29,7 @@ public class UsersPage extends BasePage {
         openCreatePage();
         fillForm(email, firstName, lastName);
         submit();
-        openUsersPage();
+        open("users");
     }
 
     public void fillForm(String email, String firstName, String lastName) {
@@ -43,7 +43,7 @@ public class UsersPage extends BasePage {
     }
 
     public UsersPage openCreatePage() {
-        openUsersPage();
+        open("users");
         click(createButton);
         return this;
     }
@@ -54,7 +54,7 @@ public class UsersPage extends BasePage {
     }
 
     public UsersPage openUserSettings(String email) {
-        openUsersPage();
+        open("users");
         String rowXpath = "//tr[td[contains(., '%s')]]".formatted(email);
         click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath))));
         return this;
@@ -72,12 +72,12 @@ public class UsersPage extends BasePage {
         lastNameInput.sendKeys(oldLast + "Updated");
 
         submit();
-        openUsersPage();
+        open("users");
         return this;
     }
 
     public UsersPage deleteUser(String email) {
-        openUsersPage();
+        open("users");
         String rowXpath = "//tr[td[contains(., '%s')]]".formatted(email);
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(rowXpath)));
         click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath + "//input[@type='checkbox']/.."))));
@@ -101,7 +101,7 @@ public class UsersPage extends BasePage {
     }
 
     public UsersPage bulkDelete() {
-        openUsersPage();
+        open("users");
         if (getUserCount() > 0) {
             click(selectAllCheckbox);
             click(deleteButton);

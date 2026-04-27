@@ -1,6 +1,8 @@
 package hexlet.code.pages;
 
+import hexlet.code.pages.login.LoginPage;
 import java.util.List;
+import java.util.stream.IntStream;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -27,6 +29,12 @@ public abstract class BasePage {
 
     @FindBy(xpath = "//a[contains(text(), 'Task statuses')]")
     protected WebElement taskStatusesMenuItem;
+
+    @FindBy(xpath = "//button[contains(., 'Jane Doe')]")
+    protected WebElement profileButton;
+
+    @FindBy(xpath = "//*[@role='menuitem' and contains(., 'Logout')]")
+    protected WebElement logoutButton;
 
     @FindBy(xpath = "//button[@type='submit']")
     protected WebElement submitButton;
@@ -82,17 +90,16 @@ public abstract class BasePage {
 
     public String getCellValue(String rowSearchText, String columnName) {
         List<WebElement> headers = driver.findElements(By.xpath("//th"));
-        int index = -1;
-        for (int i = 0; i < headers.size(); i++) {
-            if (headers.get(i).getText().contains(columnName)) {
-                index = i + 1;
-                break;
-            }
-        }
+        int index = IntStream.range(0, headers.size())
+                .filter(i -> headers.get(i).getText().contains(columnName))
+                .findFirst()
+                .orElse(-1);
+
         if (index == -1) {
             return null;
         }
-        String cellXpath = "//tr[td[contains(., '%s')]]/td[%d]".formatted(rowSearchText, index);
+
+        String cellXpath = "//tr[td[contains(., '%s')]]/td[%d]".formatted(rowSearchText, index + 1);
         return wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(cellXpath))).getText();
     }
 
@@ -104,28 +111,37 @@ public abstract class BasePage {
         click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(optXp))));
     }
 
-    public DashboardPage openDashboardPage() {
-        click(dashboardMenuItem);
-        return new DashboardPage(driver, wait);
+    public LoginPage logout() {
+        click(profileButton);
+        click(logoutButton);
+
+        return new LoginPage(driver, wait);
     }
 
-    public TasksPage openTasksPage() {
-        click(tasksMenuItem);
-        return new TasksPage(driver, wait);
-    }
-
-    public UsersPage openUsersPage() {
-        click(usersMenuItem);
-        return new UsersPage(driver, wait);
-    }
-
-    public LabelsPage openLabelsPage() {
-        click(labelsMenuItem);
-        return new LabelsPage(driver, wait);
-    }
-
-    public TaskStatusesPage openTaskStatusesPage() {
-        click(taskStatusesMenuItem);
-        return new TaskStatusesPage(driver, wait);
+    @SuppressWarnings("unchecked")
+    public <T extends BasePage> T open(String pageName) {
+        switch (pageName.toLowerCase()) {
+            case "dashboard" -> {
+                click(dashboardMenuItem);
+                return (T) new DashboardPage(driver, wait);
+            }
+            case "tasks" -> {
+                click(tasksMenuItem);
+                return (T) new TasksPage(driver, wait);
+            }
+            case "users" -> {
+                click(usersMenuItem);
+                return (T) new UsersPage(driver, wait);
+            }
+            case "labels" -> {
+                click(labelsMenuItem);
+                return (T) new LabelsPage(driver, wait);
+            }
+            case "task statuses" -> {
+                click(taskStatusesMenuItem);
+                return (T) new TaskStatusesPage(driver, wait);
+            }
+            default -> throw new IllegalArgumentException("Unknown page: " + pageName);
+        }
     }
 }

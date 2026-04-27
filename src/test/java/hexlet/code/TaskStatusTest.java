@@ -19,7 +19,7 @@ public class TaskStatusTest extends BaseTest {
         super.setUp();
         statusPage = new TaskStatusesPage(driver, wait);
         login();
-        statusPage.openTaskStatusesPage();
+        statusPage.open("task statuses");
     }
 
     @Test

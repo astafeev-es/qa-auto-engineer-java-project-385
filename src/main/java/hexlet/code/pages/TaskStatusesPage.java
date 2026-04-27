@@ -26,7 +26,7 @@ public class TaskStatusesPage extends BasePage {
         openCreatePage();
         fillForm(name, slug);
         submit();
-        openTaskStatusesPage();
+        open("task statuses");
     }
 
     public void fillForm(String name, String slug) {
@@ -37,13 +37,13 @@ public class TaskStatusesPage extends BasePage {
     }
 
     public TaskStatusesPage openCreatePage() {
-        openTaskStatusesPage();
+        open("task statuses");
         click(createButton);
         return this;
     }
 
     public TaskStatusesPage openStatusSettings(String slug) {
-        openTaskStatusesPage();
+        open("task statuses");
         String rowXpath = "//tr[td[contains(., '%s')]]".formatted(slug);
         click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath))));
         return this;
@@ -57,12 +57,12 @@ public class TaskStatusesPage extends BasePage {
         click(slugInput);
 
         submit();
-        openTaskStatusesPage();
+        open("task statuses");
         return this;
     }
 
     public TaskStatusesPage deleteStatus(String slug) {
-        openTaskStatusesPage();
+        open("task statuses");
         String rowXpath = "//tr[td[contains(., '%s')]]".formatted(slug);
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(rowXpath)));
         click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath + "//input[@type='checkbox']/.."))));
@@ -86,7 +86,7 @@ public class TaskStatusesPage extends BasePage {
     }
 
     public TaskStatusesPage bulkDelete() {
-        openTaskStatusesPage();
+        open("task statuses");
         if (getStatusCount() > 0) {
             click(selectAllCheckbox);
             click(deleteButton);

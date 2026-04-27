@@ -18,7 +18,7 @@ public class TaskTest extends BaseTest {
         super.setUp();
         tasksPage = new TasksPage(driver, wait);
         login();
-        tasksPage.openTasksPage();
+        tasksPage.open("tasks");
     }
 
     @Test

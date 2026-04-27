@@ -20,7 +20,7 @@ public class LabelsPage extends BasePage {
         openCreatePage();
         fillForm(name);
         submit();
-        openLabelsPage();
+        open("labels");
     }
 
     public void fillForm(String name) {
@@ -29,13 +29,13 @@ public class LabelsPage extends BasePage {
     }
 
     public LabelsPage openCreatePage() {
-        openLabelsPage();
+        open("labels");
         click(createButton);
         return this;
     }
 
     public LabelsPage openLabelSettings(String name) {
-        openLabelsPage();
+        open("labels");
         String rowXpath = "//tr[td[contains(., '%s')]]".formatted(name);
         click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath))));
         return this;
@@ -47,12 +47,12 @@ public class LabelsPage extends BasePage {
         nameInput.sendKeys(newName);
 
         submit();
-        openLabelsPage();
+        open("labels");
         return this;
     }
 
     public LabelsPage deleteLabel(String name) {
-        openLabelsPage();
+        open("labels");
         String rowXpath = "//tr[td[contains(., '%s')]]".formatted(name);
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(rowXpath)));
         click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath + "//input[@type='checkbox']/.."))));

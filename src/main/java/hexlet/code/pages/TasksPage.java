@@ -23,7 +23,7 @@ public class TasksPage extends BasePage {
         openCreatePage();
         fillForm(title, status, assignee);
         submit();
-        openTasksPage();
+        open("tasks");
     }
 
     public void fillForm(String title, String status, String assignee) {
@@ -35,7 +35,7 @@ public class TasksPage extends BasePage {
     }
 
     public TasksPage openCreatePage() {
-        openTasksPage();
+        open("tasks");
         click(createButton);
         return this;
     }
@@ -58,7 +58,7 @@ public class TasksPage extends BasePage {
         click(contentInput);
 
         submit();
-        openTasksPage();
+        open("tasks");
         return this;
     }
 
@@ -66,12 +66,12 @@ public class TasksPage extends BasePage {
         openTaskEdit(title);
         selectFromCombobox("Status", newStatus);
         submit();
-        openTasksPage();
+        open("tasks");
         return this;
     }
 
     public TasksPage openTaskEdit(String title) {
-        openTasksPage();
+        open("tasks");
         String xpath = "//*[@role='button' and contains(., '%s')]//a[contains(., 'Edit')]".formatted(title);
         click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath))));
         return this;
@@ -80,7 +80,7 @@ public class TasksPage extends BasePage {
     public TasksPage deleteTask(String title) {
         openTaskEdit(title);
         click(deleteButton);
-        openTasksPage();
+        open("tasks");
         String xpath = "//*[@role='button' and contains(., '%s')]".formatted(title);
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(xpath)));
         return this;
