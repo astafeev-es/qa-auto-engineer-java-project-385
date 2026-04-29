@@ -25,7 +25,8 @@ public class LoginPage extends BasePage {
     }
 
     public DashboardPage login(String username, String password) {
-        wait.until(ExpectedConditions.elementToBeClickable(usernameField));
+        wait.withMessage("Username field should be clickable")
+            .until(ExpectedConditions.elementToBeClickable(usernameField));
         usernameField.clear();
         usernameField.sendKeys(username);
 
@@ -38,8 +39,14 @@ public class LoginPage extends BasePage {
     }
 
     public boolean isLoginPageDisplayed() {
-        return wait.until(ExpectedConditions.visibilityOf(usernameField)).isDisplayed()
-            &&  wait.until(ExpectedConditions.visibilityOf(passwordField)).isDisplayed()
-            && wait.until(ExpectedConditions.visibilityOf(signInButton)).isDisplayed();
+        return wait.withMessage("Username field should be visible")
+                .until(ExpectedConditions.visibilityOf(usernameField))
+                .isDisplayed()
+            && wait.withMessage("Password field should be visible")
+                .until(ExpectedConditions.visibilityOf(passwordField))
+                .isDisplayed()
+            && wait.withMessage("Sign in button should be visible")
+                .until(ExpectedConditions.visibilityOf(signInButton))
+                .isDisplayed();
     }
 }

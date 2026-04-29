@@ -8,32 +8,32 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AuthTest extends BaseTest {
+class AuthTest extends BaseTest {
 
     private LoginPage loginPage;
     private DashboardPage dashboardPage;
 
     @BeforeEach
     @Override
-    public void setUp() {
+    void setUp() {
         super.setUp();
         loginPage = new LoginPage(driver, wait);
         dashboardPage = new DashboardPage(driver, wait);
-        driver.get(baseUrl);
+        driver.get(config.baseUrl());
     }
 
     @Test
-    public void testSuccessfulLogin() {
-        loginPage.login(username, password);
-        assertTrue(dashboardPage.isProfileVisible(), "Profile button should be visible after successful login");
+    void testSuccessfulLogin() {
+        loginPage.login(config.username(), config.password());
+        assertTrue(dashboardPage.isProfileVisible());
         assertFalse(driver.getCurrentUrl().contains("login"), "URL should not contain 'login' after successful login");
     }
 
     @Test
-    public void testSuccessfulLogout() {
-        loginPage.login(username, password)
+    void testSuccessfulLogout() {
+        loginPage.login(config.username(), config.password())
             .logout();
-        assertTrue(loginPage.isLoginPageDisplayed(), "Login page should be displayed after logout");
+        assertTrue(loginPage.isLoginPageDisplayed());
         assertTrue(driver.getCurrentUrl().contains("login") || driver.getCurrentUrl().endsWith("/"),
             "URL should redirect to login page after logout");
     }

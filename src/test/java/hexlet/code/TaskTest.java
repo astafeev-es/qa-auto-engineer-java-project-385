@@ -2,21 +2,24 @@ package hexlet.code;
 
 import hexlet.code.pages.TasksPage;
 import hexlet.code.pages.LabelsPage;
-import org.apache.commons.lang3.RandomStringUtils;
+import hexlet.code.pages.UsersPage;
+import hexlet.code.utils.RandomUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.interactions.Actions;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TaskTest extends BaseTest {
+class TaskTest extends BaseTest {
 
     private TasksPage tasksPage;
     private LabelsPage labelsPage;
 
     @BeforeEach
     @Override
-    public void setUp() {
+    void setUp() {
         super.setUp();
         tasksPage = new TasksPage(driver, wait);
         labelsPage = new LabelsPage(driver, wait);
@@ -25,8 +28,8 @@ public class TaskTest extends BaseTest {
     }
 
     @Test
-    public void testTaskListDisplay() {
-        String title = "ListTask" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
+    void testTaskListDisplay() {
+        String title = "ListTask" + RandomUtils.randomString();
         tasksPage.create(title, "Draft", "jane@gmail.com");
 
         assertTrue(tasksPage.getTaskCount() > 0, "Task board should contain records");
@@ -35,23 +38,23 @@ public class TaskTest extends BaseTest {
     }
 
     @Test
-    public void testTaskFiltration() {
-        String labelName = "FilterLabel" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
+    void testTaskFiltration() {
+        String labelName = "FilterLabel" + RandomUtils.randomString();
         labelsPage.openCreatePage().fillForm(labelName);
         labelsPage.submit();
 
         tasksPage.open("tasks");
 
-        String title = "FilterTask" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
+        String title = "FilterTask" + RandomUtils.randomString();
         tasksPage.openCreatePage();
         tasksPage.fillForm(title, "To Review", "jane@gmail.com");
         tasksPage.selectFromCombobox("Label", labelName);
-        new org.openqa.selenium.interactions.Actions(driver).sendKeys(org.openqa.selenium.Keys.ESCAPE).perform();
+        new Actions(driver).sendKeys(Keys.ESCAPE).perform();
         tasksPage.submit();
         tasksPage.open("tasks");
 
-        String otherTitle = "OtherTask" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
-        hexlet.code.pages.UsersPage usersPage = new hexlet.code.pages.UsersPage(driver, wait);
+        String otherTitle = "OtherTask" + RandomUtils.randomString();
+        UsersPage usersPage = new UsersPage(driver, wait);
         usersPage.create("john@gmail.com", "John", "Doe");
         tasksPage.create(otherTitle, "Draft", "john@gmail.com");
 
@@ -84,8 +87,8 @@ public class TaskTest extends BaseTest {
     }
 
     @Test
-    public void testTaskDeletion() {
-        String title = "DeleteTask" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
+    void testTaskDeletion() {
+        String title = "DeleteTask" + RandomUtils.randomString();
         tasksPage.create(title, "Draft", "jane@gmail.com");
 
         assertTrue(tasksPage.getTaskCount() > 0, "Task board should contain records before delete");
@@ -95,8 +98,8 @@ public class TaskTest extends BaseTest {
     }
 
     @Test
-    public void testTaskCreation() {
-        String title = "Task" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
+    void testTaskCreation() {
+        String title = "Task" + RandomUtils.randomString();
         tasksPage.openCreatePage();
         assertTrue(tasksPage.isCreateFormDisplayed(), "Task creation form should show required fields");
         tasksPage.fillForm(title, "Draft", "jane@gmail.com");
@@ -106,18 +109,18 @@ public class TaskTest extends BaseTest {
     }
 
     @Test
-    public void testTaskEditing() {
-        String title = "EditTask" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
+    void testTaskEditing() {
+        String title = "EditTask" + RandomUtils.randomString();
         tasksPage.create(title, "Draft", "jane@gmail.com");
 
-        String newTitle = "UpdatedTask" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
+        String newTitle = "UpdatedTask" + RandomUtils.randomString();
         tasksPage.edit(title, newTitle);
         assertTrue(tasksPage.isTaskInColumn(newTitle, "Draft"), "Updated task title should be present in the column");
     }
 
     @Test
-    public void testTaskMoving() {
-        String title = "MoveTask" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
+    void testTaskMoving() {
+        String title = "MoveTask" + RandomUtils.randomString();
         tasksPage.create(title, "Draft", "jane@gmail.com");
 
         tasksPage.moveTask(title, "Published");

@@ -1,7 +1,7 @@
 package hexlet.code;
 
 import hexlet.code.pages.TaskStatusesPage;
-import org.apache.commons.lang3.RandomStringUtils;
+import hexlet.code.utils.RandomUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -9,13 +9,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TaskStatusTest extends BaseTest {
+class TaskStatusTest extends BaseTest {
 
     private TaskStatusesPage statusPage;
 
     @BeforeEach
     @Override
-    public void setUp() {
+    void setUp() {
         super.setUp();
         statusPage = new TaskStatusesPage(driver, wait);
         login();
@@ -23,9 +23,9 @@ public class TaskStatusTest extends BaseTest {
     }
 
     @Test
-    public void testStatusCreation() {
-        String name = "Name" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
-        String slug = "slug" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
+    void testStatusCreation() {
+        String name = "Name" + RandomUtils.randomString();
+        String slug = "slug" + RandomUtils.randomString();
         statusPage.openCreatePage();
         assertTrue(statusPage.isCreateFormDisplayed(),
             "Status creation form should be visible with all required fields");
@@ -37,9 +37,9 @@ public class TaskStatusTest extends BaseTest {
     }
 
     @Test
-    public void testStatusListDisplay() {
-        String name = "List" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
-        String slug = "slug" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
+    void testStatusListDisplay() {
+        String name = "List" + RandomUtils.randomString();
+        String slug = "slug" + RandomUtils.randomString();
         statusPage.create(name, slug);
 
         assertTrue(statusPage.isColumnVisible("Name"), "Name column should be visible");
@@ -50,16 +50,16 @@ public class TaskStatusTest extends BaseTest {
     }
 
     @Test
-    public void testStatusEditing() {
-        String name = "Before" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
-        String slug = "edit" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
+    void testStatusEditing() {
+        String name = "Before" + RandomUtils.randomString();
+        String slug = "edit" + RandomUtils.randomString();
         statusPage.create(name, slug);
 
         statusPage.openStatusSettings(slug);
         assertEquals(name, statusPage.getFieldValue("name"), "Name field should contain original status name");
         assertEquals(slug, statusPage.getFieldValue("slug"), "Slug field should contain original status slug");
 
-        String newName = "After" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
+        String newName = "After" + RandomUtils.randomString();
         statusPage.edit(slug, newName);
         assertEquals(newName, statusPage.getCellValue(slug, "Name"),
             "Updated status row should contain the saved name");
@@ -68,20 +68,20 @@ public class TaskStatusTest extends BaseTest {
     }
 
     @Test
-    public void testStatusDeletion() {
-        String name = "Delete" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
-        String slug = "del" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
+    void testStatusDeletion() {
+        String name = "Delete" + RandomUtils.randomString();
+        String slug = "del" + RandomUtils.randomString();
         statusPage.create(name, slug);
         statusPage.deleteStatus(slug);
         assertFalse(statusPage.isStatusPresent(slug), "Deleted status slug should not be present in the list");
     }
 
     @Test
-    public void testBulkDelete() {
-        String firstName = "Bulk" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
-        String firstSlug = "bulk" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
-        String secondName = "Bulk" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
-        String secondSlug = "bulk" + RandomStringUtils.secure().nextAlphanumeric(4, 8);
+    void testBulkDelete() {
+        String firstName = "Bulk" + RandomUtils.randomString();
+        String firstSlug = "bulk" + RandomUtils.randomString();
+        String secondName = "Bulk" + RandomUtils.randomString();
+        String secondSlug = "bulk" + RandomUtils.randomString();
 
         statusPage.create(firstName, firstSlug);
         statusPage.create(secondName, secondSlug);

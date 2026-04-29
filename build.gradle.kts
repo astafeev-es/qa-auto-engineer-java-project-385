@@ -30,12 +30,6 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-    // Указываем Gradle, что результат теста зависит от этой переменной
-    inputs.property("APP_BASE_URL", providers.environmentVariable("APP_BASE_URL").getOrElse("http://localhost:5173"))
-    
-    environment("APP_BASE_URL", providers.environmentVariable("APP_BASE_URL").getOrElse("http://localhost:5173"))
-    environment("USERNAME", providers.environmentVariable("USERNAME").getOrElse("aleksei98"))
-    environment("PASSWORD", providers.environmentVariable("PASSWORD").getOrElse("[trcktnghjtrn_98"))
 }
 
 tasks.withType<DependencyUpdatesTask> {

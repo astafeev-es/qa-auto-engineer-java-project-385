@@ -53,7 +53,8 @@ public abstract class BasePage {
         int attempts = 0;
         while (attempts < 3) {
             try {
-                wait.until(ExpectedConditions.elementToBeClickable(element)).click();
+                wait.withMessage("Element should be clickable: " + element.toString())
+                    .until(ExpectedConditions.elementToBeClickable(element)).click();
                 return;
             } catch (org.openqa.selenium.ElementClickInterceptedException e) {
                 try {
@@ -73,7 +74,8 @@ public abstract class BasePage {
 
     public String getFieldValue(String fieldName) {
         By locator = By.name(fieldName);
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(locator)).getAttribute("value");
+        return wait.withMessage("Field should be visible: " + fieldName)
+                .until(ExpectedConditions.visibilityOfElementLocated(locator)).getAttribute("value");
     }
 
     public boolean isColumnVisible(String columnName) {
@@ -97,15 +99,19 @@ public abstract class BasePage {
         }
 
         String cellXpath = "//tr[td[contains(., '%s')]]/td[%d]".formatted(rowSearchText, index + 1);
-        return wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(cellXpath))).getText();
+        return wait.withMessage("Cell with value '" + rowSearchText
+                        + "' and column '" + columnName + "' should be present")
+                .until(ExpectedConditions.presenceOfElementLocated(By.xpath(cellXpath))).getText();
     }
 
     public void selectFromCombobox(String label, String value) {
         String comboXp = "//div[label[contains(., '%s')]]//div[@role='combobox']".formatted(label);
-        click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(comboXp))));
+        click(wait.withMessage("Combobox with label '" + label + "' should be clickable")
+                .until(ExpectedConditions.elementToBeClickable(By.xpath(comboXp))));
 
         String optXp = "//li[@role='option' and contains(., '%s')]".formatted(value);
-        click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(optXp))));
+        click(wait.withMessage("Option with value '" + value + "' should be clickable")
+                .until(ExpectedConditions.elementToBeClickable(By.xpath(optXp))));
     }
 
     public LoginPage logout() {

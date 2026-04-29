@@ -11,6 +11,8 @@ public class DashboardPage extends BasePage {
     }
 
     public boolean isProfileVisible() {
-        return wait.until(ExpectedConditions.visibilityOf(profileButton)).isDisplayed();
+        return wait.withMessage("Profile button should be visible")
+                .until(ExpectedConditions.visibilityOf(profileButton))
+                .isDisplayed();
     }
 }
