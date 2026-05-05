@@ -2,6 +2,7 @@ package hexlet.code.utils;
 
 import java.time.Duration;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -58,14 +59,32 @@ public class ElementHelper {
     }
 
     public void click(WebElement element) {
+        int attempts = 0;
+        while (attempts < 3) {
+            try {
+                LOGGER.debug("Clicking element: {}. Attempt: {}", element, attempts + 1);
+                wait.pollingEvery(Duration.ofMillis(500))
+                    .until(ExpectedConditions.elementToBeClickable(element))
+                    .click();
+                return;
+            } catch (ElementClickInterceptedException e) {
+                LOGGER.warn("Click intercepted for element: {}. Waiting for snackbars to disappear...", element);
+                handleIntercept();
+                attempts++;
+            } catch (Exception e) {
+                LOGGER.error("Error clicking element: {}", element, e);
+                throw e;
+            }
+        }
+        // Last attempt without catching intercepted
+        element.click();
+    }
+
+    private void handleIntercept() {
         try {
-            LOGGER.debug("Clicking element: {}", element);
-            wait.pollingEvery(Duration.ofMillis(500))
-                .until(ExpectedConditions.elementToBeClickable(element))
-                .click();
-        } catch (Exception e) {
-            LOGGER.error("Error clicking element: {}", element);
-            throw e;
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("MuiSnackbar-root")));
+        } catch (Exception ignored) {
+            // Snackbar might not be there anymore or we timed out
         }
     }
 }
