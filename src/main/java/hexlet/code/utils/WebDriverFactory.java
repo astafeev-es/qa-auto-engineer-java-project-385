@@ -16,15 +16,33 @@ public class WebDriverFactory {
         options.addArguments("--headless");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--disable-gpu");
+        options.addArguments("--remote-allow-origins=*");
         options.addArguments("--window-size=" + config.windowSize());
 
-        try {
-            WebDriver driver = new ChromeDriver(options);
-            LOGGER.info("Chrome WebDriver created successfully");
-            return driver;
-        } catch (Exception e) {
-            LOGGER.error("Error creating Chrome WebDriver", e);
-            throw e;
+        int maxAttempts = 3;
+        Exception lastException = null;
+
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            try {
+                WebDriver driver = new ChromeDriver(options);
+                LOGGER.info("Chrome WebDriver created successfully on attempt {}", attempt);
+                return driver;
+            } catch (Exception e) {
+                LOGGER.error("Attempt {} to create Chrome WebDriver failed", attempt, e);
+                lastException = e;
+                if (attempt < maxAttempts) {
+                    try {
+                        Thread.sleep(2000); // Wait before retry
+                    } catch (InterruptedException ignored) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
         }
+
+        LOGGER.error("All {} attempts to create Chrome WebDriver failed", maxAttempts);
+        String msg = "Failed to create WebDriver session after " + maxAttempts + " attempts";
+        throw new RuntimeException(msg, lastException);
     }
 }
