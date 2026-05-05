@@ -20,6 +20,7 @@ The goal of this project is to implement robust UI automation for a task manager
 ## Tech Stack
 - **Language**: Java 21
 - **Testing Framework**: JUnit 5
+- **Logging**: Slf4j
 - **UI Automation**: Selenium WebDriver (with Headless Chrome)
 - **Design Pattern**: Page Object Model (POM)
 - **Build System**: Gradle
