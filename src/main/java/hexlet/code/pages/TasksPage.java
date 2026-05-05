@@ -19,34 +19,36 @@ public class TasksPage extends BasePage {
         super(driver, wait);
     }
 
+    @Override
+    public void open() {
+        elementHelper.click(tasksMenuItem);
+    }
+
     public void create(String title, String status, String assignee) {
         openCreatePage();
         fillForm(title, status, assignee);
         submit();
-        open("tasks");
+        open();
     }
 
     public void fillForm(String title, String status, String assignee) {
-        wait.until(ExpectedConditions.visibilityOf(titleInput)).clear();
-        titleInput.sendKeys(title);
+        elementHelper.sendKeys(titleInput, title);
 
         selectFromCombobox("Status", status);
         selectFromCombobox("Assignee", assignee);
     }
 
     public TasksPage openCreatePage() {
-        open("tasks");
-        click(createButton);
+        open();
+        elementHelper.click(createButton);
         return this;
     }
 
     public boolean isCreateFormDisplayed() {
-        return wait.until(ExpectedConditions.visibilityOf(titleInput)).isDisplayed()
-            && wait.until(ExpectedConditions.visibilityOf(submitButton)).isDisplayed()
-            && wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//*[contains(normalize-space(.), 'Assignee')]"))).isDisplayed()
-            && wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//*[contains(normalize-space(.), 'Status')]"))).isDisplayed();
+        return elementHelper.isVisible(titleInput)
+            && elementHelper.isVisible(submitButton)
+            && elementHelper.isVisibleBy(By.xpath("//*[contains(normalize-space(.), 'Assignee')]"))
+            && elementHelper.isVisibleBy(By.xpath("//*[contains(normalize-space(.), 'Status')]"));
     }
 
     public boolean isTaskInColumn(String title, String columnName) {
@@ -68,20 +70,19 @@ public class TasksPage extends BasePage {
         }
     }
 
+    @Override
     public boolean isColumnVisible(String columnName) {
         String xpath = "//h6[contains(., '" + columnName + "')]";
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)))
-            .isDisplayed();
+        return elementHelper.isVisibleBy(By.xpath(xpath));
     }
 
     public TasksPage edit(String title, String newTitle) {
         openTaskEdit(title);
-        wait.until(ExpectedConditions.visibilityOf(titleInput)).clear();
-        titleInput.sendKeys(newTitle);
-        click(contentInput);
+        elementHelper.sendKeys(titleInput, newTitle);
+        elementHelper.click(contentInput);
 
         submit();
-        open("tasks");
+        open();
         return this;
     }
 
@@ -89,21 +90,22 @@ public class TasksPage extends BasePage {
         openTaskEdit(title);
         selectFromCombobox("Status", newStatus);
         submit();
-        open("tasks");
+        open();
         return this;
     }
 
     public TasksPage openTaskEdit(String title) {
-        open("tasks");
+        open();
         String xpath = "//*[@role='button' and contains(., '%s')]//a[contains(., 'Edit')]".formatted(title);
-        click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath))));
+        WebElement editBtn = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpath)));
+        elementHelper.click(editBtn);
         return this;
     }
 
     public TasksPage deleteTask(String title) {
         openTaskEdit(title);
-        click(deleteButton);
-        open("tasks");
+        elementHelper.click(deleteButton);
+        open();
         String xpath = "//*[@data-rfd-draggable-id and contains(., '%s')]".formatted(title);
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(xpath)));
         return this;

@@ -16,64 +16,66 @@ public class LabelsPage extends BasePage {
         super(driver, wait);
     }
 
+    @Override
+    public void open() {
+        elementHelper.click(labelsMenuItem);
+    }
+
     public void create(String name) {
         openCreatePage();
         fillForm(name);
         submit();
-        open("labels");
+        open();
     }
 
     public void fillForm(String name) {
-        wait.until(ExpectedConditions.visibilityOf(nameInput)).clear();
-        nameInput.sendKeys(name);
+        elementHelper.sendKeys(nameInput, name);
     }
 
     public LabelsPage openCreatePage() {
-        open("labels");
-        click(createButton);
+        open();
+        elementHelper.click(createButton);
         return this;
     }
 
     public boolean isCreateFormDisplayed() {
-        return wait.until(ExpectedConditions.visibilityOf(nameInput)).isDisplayed()
-            && wait.until(ExpectedConditions.visibilityOf(submitButton)).isDisplayed();
+        return elementHelper.isVisible(nameInput)
+            && elementHelper.isVisible(submitButton);
     }
 
     public LabelsPage openLabelSettings(String name) {
-        open("labels");
+        open();
         String rowXpath = "//tr[td[contains(., '%s')]]".formatted(name);
-        click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath))));
+        WebElement row = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath)));
+        elementHelper.click(row);
         return this;
     }
 
     public LabelsPage edit(String name, String newName) {
         openLabelSettings(name);
-        wait.until(ExpectedConditions.visibilityOf(nameInput)).clear();
-        nameInput.sendKeys(newName);
+        elementHelper.sendKeys(nameInput, newName);
 
         submit();
-        open("labels");
+        open();
         return this;
     }
 
     public LabelsPage deleteLabel(String name) {
-        open("labels");
+        open();
         String rowXpath = "//tr[td[contains(., '%s')]]".formatted(name);
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(rowXpath)));
-        click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath + "//input[@type='checkbox']/.."))));
+        String checkboxXpath = rowXpath + "//input[@type='checkbox']/..";
+        WebElement checkbox = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(checkboxXpath)));
+        elementHelper.click(checkbox);
 
-        click(deleteButton);
+        elementHelper.click(deleteButton);
         String cellXpath = "//table/tbody/tr/td[contains(., '%s')]".formatted(name);
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(cellXpath)));
         return this;
     }
 
     public boolean isLabelPresent(String text) {
-        try {
-            return driver.findElements(By.xpath("//td[contains(., '" + text + "')]")).size() > 0;
-        } catch (Exception e) {
-            return false;
-        }
+        return driver.findElements(By.xpath("//td[contains(., '" + text + "')]")).size() > 0;
     }
 
     public int getLabelCount() {

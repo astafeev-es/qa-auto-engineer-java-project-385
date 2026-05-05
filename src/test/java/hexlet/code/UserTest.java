@@ -19,7 +19,7 @@ class UserTest extends BaseTest {
         super.setUp();
         usersPage = new UsersPage(driver, wait);
         login();
-        usersPage.open("users");
+        usersPage.open();
     }
 
     @Test
@@ -29,7 +29,7 @@ class UserTest extends BaseTest {
         assertTrue(usersPage.isCreateFormDisplayed(), "User creation form should be visible with all required fields");
         usersPage.fillForm(email, "John", "Doe");
         usersPage.submit();
-        usersPage.open("users");
+        usersPage.open();
         assertTrue(usersPage.isUserPresent(email), "Created user should be present in the user list");
     }
 

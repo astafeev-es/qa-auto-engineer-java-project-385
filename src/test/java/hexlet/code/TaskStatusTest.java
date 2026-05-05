@@ -19,7 +19,7 @@ class TaskStatusTest extends BaseTest {
         super.setUp();
         statusPage = new TaskStatusesPage(driver, wait);
         login();
-        statusPage.open("task statuses");
+        statusPage.open();
     }
 
     @Test
@@ -31,7 +31,7 @@ class TaskStatusTest extends BaseTest {
             "Status creation form should be visible with all required fields");
         statusPage.fillForm(name, slug);
         statusPage.submit();
-        statusPage.open("task statuses");
+        statusPage.open();
         assertTrue(statusPage.isStatusPresent(name), "Created status name should be present in the list");
         assertTrue(statusPage.isStatusPresent(slug), "Created status slug should be present in the list");
     }

@@ -4,6 +4,7 @@ public interface Config {
     String baseUrl();
     String username();
     String password();
+    String windowSize();
 
     static Config get() {
         String environment = System.getProperty("test.env", "local");

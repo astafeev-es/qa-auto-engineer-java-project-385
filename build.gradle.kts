@@ -24,7 +24,9 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:6.0.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     implementation("org.seleniumhq.selenium:selenium-java:4.40.0")
-    testImplementation("org.apache.commons:commons-lang3:3.20.0")
+    implementation("org.apache.commons:commons-lang3:3.20.0")
+    implementation("org.slf4j:slf4j-api:2.0.12")
+    implementation("ch.qos.logback:logback-classic:1.5.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

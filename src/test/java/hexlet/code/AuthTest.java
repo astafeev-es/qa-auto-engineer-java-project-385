@@ -19,18 +19,19 @@ class AuthTest extends BaseTest {
         super.setUp();
         loginPage = new LoginPage(driver, wait);
         dashboardPage = new DashboardPage(driver, wait);
-        driver.get(config.baseUrl());
     }
 
     @Test
     void testSuccessfulLogin() {
+        loginPage.open();
         loginPage.login(config.username(), config.password());
-        assertTrue(dashboardPage.isProfileVisible());
+        assertTrue(dashboardPage.isDashboardPageDisplayed(), "Dashboard should be displayed");
         assertFalse(driver.getCurrentUrl().contains("login"), "URL should not contain 'login' after successful login");
     }
 
     @Test
     void testSuccessfulLogout() {
+        loginPage.open();
         loginPage.login(config.username(), config.password())
             .logout();
         assertTrue(loginPage.isLoginPageDisplayed());

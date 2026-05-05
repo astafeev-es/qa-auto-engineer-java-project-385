@@ -24,7 +24,7 @@ class TaskTest extends BaseTest {
         tasksPage = new TasksPage(driver, wait);
         labelsPage = new LabelsPage(driver, wait);
         login();
-        tasksPage.open("tasks");
+        tasksPage.open();
     }
 
     @Test
@@ -43,7 +43,7 @@ class TaskTest extends BaseTest {
         labelsPage.openCreatePage().fillForm(labelName);
         labelsPage.submit();
 
-        tasksPage.open("tasks");
+        tasksPage.open();
 
         String title = "FilterTask" + RandomUtils.randomString();
         tasksPage.openCreatePage();
@@ -51,7 +51,7 @@ class TaskTest extends BaseTest {
         tasksPage.selectFromCombobox("Label", labelName);
         new Actions(driver).sendKeys(Keys.ESCAPE).perform();
         tasksPage.submit();
-        tasksPage.open("tasks");
+        tasksPage.open();
 
         String otherTitle = "OtherTask" + RandomUtils.randomString();
         UsersPage usersPage = new UsersPage(driver, wait);
@@ -67,7 +67,7 @@ class TaskTest extends BaseTest {
         assertFalse(tasksPage.isTaskInColumn(otherTitle, "Draft"),
             "Irrelevant task should not be visible after filtration by Status");
 
-        tasksPage.open("tasks");
+        tasksPage.open();
 
         tasksPage.selectFromCombobox("Assignee", "jane@gmail.com");
         tasksPage.waitForTaskToDisappear(otherTitle);
@@ -76,7 +76,7 @@ class TaskTest extends BaseTest {
         assertFalse(tasksPage.isTaskInColumn(otherTitle, "Draft"),
             "Irrelevant task should not be visible after filtration by Assignee");
 
-        tasksPage.open("tasks");
+        tasksPage.open();
 
         tasksPage.selectFromCombobox("Label", labelName); // Could be 'Labels' or 'Label'
         tasksPage.waitForTaskToDisappear(otherTitle);
@@ -104,7 +104,7 @@ class TaskTest extends BaseTest {
         assertTrue(tasksPage.isCreateFormDisplayed(), "Task creation form should show required fields");
         tasksPage.fillForm(title, "Draft", "jane@gmail.com");
         tasksPage.submit();
-        tasksPage.open("tasks");
+        tasksPage.open();
         assertTrue(tasksPage.isTaskInColumn(title, "Draft"), "Created task should be present in the 'Draft' column");
     }
 

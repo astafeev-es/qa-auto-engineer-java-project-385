@@ -1,5 +1,6 @@
 package hexlet.code.pages;
 
+import hexlet.code.utils.ElementHelper;
 import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -12,6 +13,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public abstract class BasePage {
     protected WebDriver driver;
     protected WebDriverWait wait;
+    protected ElementHelper elementHelper;
 
     @FindBy(xpath = "//a[contains(text(), 'Dashboard')]")
     protected WebElement dashboardMenuItem;
@@ -43,62 +45,62 @@ public abstract class BasePage {
     @FindBy(xpath = "//button[@aria-label='Delete']")
     protected WebElement deleteButton;
 
-    public BasePage(WebDriver driver, WebDriverWait wait) {
+    protected BasePage(WebDriver driver, WebDriverWait wait) {
         this.driver = driver;
         this.wait = wait;
+        this.elementHelper = new ElementHelper(wait);
         PageFactory.initElements(driver, this);
     }
 
-    protected void click(WebElement element) {
-        int attempts = 0;
-        while (attempts < 3) {
-            try {
-                wait.withMessage("Element should be clickable: " + element.toString())
-                    .until(ExpectedConditions.elementToBeClickable(element)).click();
-                return;
-            } catch (org.openqa.selenium.ElementClickInterceptedException e) {
-                try {
-                    wait.until(ExpectedConditions.invisibilityOfElementLocated(By.className("MuiSnackbar-root")));
-                } catch (Exception ignored) {
-                    // do nothing
-                }
-                attempts++;
-            }
-        }
-        element.click();
-    }
+    public abstract void open();
 
     public void submit() {
-        click(submitButton);
+        elementHelper.click(submitButton);
     }
 
     public String getFieldValue(String fieldName) {
         By locator = By.name(fieldName);
-        return wait.withMessage("Field should be visible: " + fieldName)
-                .until(ExpectedConditions.visibilityOfElementLocated(locator)).getAttribute("value");
+        WebElement element = wait.withMessage("Field should be visible: " + fieldName)
+                .until(ExpectedConditions.visibilityOfElementLocated(locator));
+        return element.getAttribute("value");
     }
 
     public boolean isColumnVisible(String columnName) {
         return driver.findElements(By.xpath("//th[contains(., '" + columnName + "')]")).size() > 0;
     }
 
-    public String getCellValue(String rowSearchText, String columnName) {
+    private int getColumnIndex(String columnName) {
         List<WebElement> headers = driver.findElements(By.xpath("//th"));
-        int index = -1;
-        int currentIndex = 0;
+        int index = 0;
         for (WebElement header : headers) {
             if (header.getText().contains(columnName)) {
-                index = currentIndex;
-                break;
+                return index;
             }
-            currentIndex++;
+            index++;
         }
+        return -1;
+    }
 
-        if (index == -1) {
+    public String getCellValue(int rowIndex, String columnName) {
+        int colIndex = getColumnIndex(columnName);
+        if (colIndex == -1) {
             return null;
         }
 
-        String cellXpath = "//tr[td[contains(., '%s')]]/td[%d]".formatted(rowSearchText, index + 1);
+        // rowIndex is 1-based for XPath
+        String cellXpath = "//tr[%d]/td[%d]".formatted(rowIndex, colIndex + 1);
+        return wait.withMessage("Cell in row " + rowIndex + " and column '" + columnName + "' should be present")
+                .until(ExpectedConditions.presenceOfElementLocated(By.xpath(cellXpath))).getText();
+    }
+
+    // Overload for backward compatibility or searching by text if needed
+    public String getCellValue(String rowSearchText, String columnName) {
+        int colIndex = getColumnIndex(columnName);
+        if (colIndex == -1) {
+            return null;
+        }
+
+        String cellXpath = "//tr[td[contains(., '%s')]]/td[%d]".formatted(rowSearchText, colIndex + 1);
         return wait.withMessage("Cell with value '" + rowSearchText
                         + "' and column '" + columnName + "' should be present")
                 .until(ExpectedConditions.presenceOfElementLocated(By.xpath(cellXpath))).getText();
@@ -106,45 +108,20 @@ public abstract class BasePage {
 
     public void selectFromCombobox(String label, String value) {
         String comboXp = "//div[label[contains(., '%s')]]//div[@role='combobox']".formatted(label);
-        click(wait.withMessage("Combobox with label '" + label + "' should be clickable")
-                .until(ExpectedConditions.elementToBeClickable(By.xpath(comboXp))));
+        WebElement combo = wait.withMessage("Combobox with label '" + label + "' should be clickable")
+                .until(ExpectedConditions.elementToBeClickable(By.xpath(comboXp)));
+        elementHelper.click(combo);
 
         String optXp = "//li[@role='option' and contains(., '%s')]".formatted(value);
-        click(wait.withMessage("Option with value '" + value + "' should be clickable")
-                .until(ExpectedConditions.elementToBeClickable(By.xpath(optXp))));
+        WebElement option = wait.withMessage("Option with value '" + value + "' should be clickable")
+                .until(ExpectedConditions.elementToBeClickable(By.xpath(optXp)));
+        elementHelper.click(option);
     }
 
     public LoginPage logout() {
-        click(profileButton);
-        click(logoutButton);
+        elementHelper.click(profileButton);
+        elementHelper.click(logoutButton);
 
         return new LoginPage(driver, wait);
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T extends BasePage> T open(String pageName) {
-        switch (pageName.toLowerCase()) {
-            case "dashboard" -> {
-                click(dashboardMenuItem);
-                return (T) new DashboardPage(driver, wait);
-            }
-            case "tasks" -> {
-                click(tasksMenuItem);
-                return (T) new TasksPage(driver, wait);
-            }
-            case "users" -> {
-                click(usersMenuItem);
-                return (T) new UsersPage(driver, wait);
-            }
-            case "labels" -> {
-                click(labelsMenuItem);
-                return (T) new LabelsPage(driver, wait);
-            }
-            case "task statuses" -> {
-                click(taskStatusesMenuItem);
-                return (T) new TaskStatusesPage(driver, wait);
-            }
-            default -> throw new IllegalArgumentException("Unknown page: " + pageName);
-        }
     }
 }

@@ -23,53 +23,56 @@ public class TaskStatusesPage extends BasePage {
         super(driver, wait);
     }
 
+    @Override
+    public void open() {
+        elementHelper.click(taskStatusesMenuItem);
+    }
+
     public void create(String name, String slug) {
         openCreatePage();
         fillForm(name, slug);
         submit();
-        open("task statuses");
+        open();
     }
 
     public void fillForm(String name, String slug) {
-        wait.until(ExpectedConditions.visibilityOf(nameInput)).clear();
-        nameInput.sendKeys(name);
-        slugInput.clear();
-        slugInput.sendKeys(slug);
+        elementHelper.sendKeys(nameInput, name);
+        elementHelper.sendKeys(slugInput, slug);
     }
 
     public TaskStatusesPage openCreatePage() {
-        open("task statuses");
-        click(createButton);
+        open();
+        elementHelper.click(createButton);
         return this;
     }
 
     public boolean isCreateFormDisplayed() {
-        return wait.until(ExpectedConditions.visibilityOf(nameInput)).isDisplayed()
-            && wait.until(ExpectedConditions.visibilityOf(slugInput)).isDisplayed()
-            && wait.until(ExpectedConditions.visibilityOf(submitButton)).isDisplayed();
+        return elementHelper.isVisible(nameInput)
+            && elementHelper.isVisible(slugInput)
+            && elementHelper.isVisible(submitButton);
     }
 
     public TaskStatusesPage openStatusSettings(String slug) {
-        open("task statuses");
+        open();
         String rowXpath = "//tr[td[contains(., '%s')]]".formatted(slug);
-        click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath))));
+        WebElement row = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath)));
+        elementHelper.click(row);
         return this;
     }
 
     public TaskStatusesPage edit(String slug, String newName) {
         openStatusSettings(slug);
-        wait.until(ExpectedConditions.visibilityOf(nameInput));
         replaceInputValue(nameInput, newName);
-        click(slugInput);
+        elementHelper.click(slugInput);
 
         submit();
-        open("task statuses");
+        open();
         return this;
     }
 
     private void replaceInputValue(WebElement input, String value) {
         String currentValue = input.getAttribute("value");
-        input.click();
+        elementHelper.click(input);
         input.sendKeys(Keys.END);
         for (int index = 0; index < currentValue.length(); index++) {
             input.sendKeys(Keys.BACK_SPACE);
@@ -78,23 +81,21 @@ public class TaskStatusesPage extends BasePage {
     }
 
     public TaskStatusesPage deleteStatus(String slug) {
-        open("task statuses");
+        open();
         String rowXpath = "//tr[td[contains(., '%s')]]".formatted(slug);
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(rowXpath)));
-        click(wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath + "//input[@type='checkbox']/.."))));
+        String checkboxXpath = rowXpath + "//input[@type='checkbox']/..";
+        WebElement checkbox = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(checkboxXpath)));
+        elementHelper.click(checkbox);
 
-        click(deleteButton);
+        elementHelper.click(deleteButton);
         String cellXpath = "//table/tbody/tr/td[contains(., '%s')]".formatted(slug);
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(cellXpath)));
         return this;
     }
 
     public boolean isStatusPresent(String text) {
-        try {
-            return driver.findElements(By.xpath("//td[contains(., '" + text + "')]")).size() > 0;
-        } catch (Exception e) {
-            return false;
-        }
+        return driver.findElements(By.xpath("//td[contains(., '" + text + "')]")).size() > 0;
     }
 
     public int getStatusCount() {
@@ -102,10 +103,10 @@ public class TaskStatusesPage extends BasePage {
     }
 
     public TaskStatusesPage bulkDelete() {
-        open("task statuses");
+        open();
         if (getStatusCount() > 0) {
-            click(selectAllCheckbox);
-            click(deleteButton);
+            elementHelper.click(selectAllCheckbox);
+            elementHelper.click(deleteButton);
             wait.until(ExpectedConditions.numberOfElementsToBe(By.xpath("//table/tbody/tr[td]"), 0));
         }
         return this;

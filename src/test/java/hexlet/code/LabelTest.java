@@ -19,7 +19,7 @@ class LabelTest extends BaseTest {
         super.setUp();
         labelsPage = new LabelsPage(driver, wait);
         login();
-        labelsPage.open("labels");
+        labelsPage.open();
     }
 
     @Test
@@ -29,7 +29,7 @@ class LabelTest extends BaseTest {
         assertTrue(labelsPage.isCreateFormDisplayed(), "Label creation form should be visible with required fields");
         labelsPage.fillForm(name);
         labelsPage.submit();
-        labelsPage.open("labels");
+        labelsPage.open();
         assertTrue(labelsPage.isLabelPresent(name), "Created label should be present in the labels list");
     }
 
