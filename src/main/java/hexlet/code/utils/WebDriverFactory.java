@@ -7,13 +7,18 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WebDriverFactory {
+public final class WebDriverFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebDriverFactory.class);
+
+    private WebDriverFactory() {
+    }
 
     public static WebDriver create(Config config) {
         LOGGER.info("Creating Chrome WebDriver with window size: {}", config.windowSize());
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless");
+        if (config.headless()) {
+            options.addArguments("--headless");
+        }
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--disable-gpu");

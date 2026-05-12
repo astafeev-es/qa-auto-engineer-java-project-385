@@ -3,12 +3,14 @@ package hexlet.code;
 import hexlet.code.pages.TaskStatusesPage;
 import hexlet.code.utils.RandomUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisplayName("Task Statuses Management Tests")
 class TaskStatusTest extends BaseTest {
 
     private TaskStatusesPage statusPage;
@@ -17,12 +19,13 @@ class TaskStatusTest extends BaseTest {
     @Override
     void setUp() {
         super.setUp();
-        statusPage = new TaskStatusesPage(driver, wait);
+        statusPage = new TaskStatusesPage(driver);
         login();
         statusPage.open();
     }
 
     @Test
+    @DisplayName("Successfully create a new task status")
     void testStatusCreation() {
         String name = "Name" + RandomUtils.randomString();
         String slug = "slug" + RandomUtils.randomString();
@@ -37,6 +40,7 @@ class TaskStatusTest extends BaseTest {
     }
 
     @Test
+    @DisplayName("Task status list display correct columns and data")
     void testStatusListDisplay() {
         String name = "List" + RandomUtils.randomString();
         String slug = "slug" + RandomUtils.randomString();
@@ -50,6 +54,7 @@ class TaskStatusTest extends BaseTest {
     }
 
     @Test
+    @DisplayName("Successfully edit an existing task status")
     void testStatusEditing() {
         String name = "Before" + RandomUtils.randomString();
         String slug = "edit" + RandomUtils.randomString();
@@ -68,6 +73,7 @@ class TaskStatusTest extends BaseTest {
     }
 
     @Test
+    @DisplayName("Successfully delete a task status")
     void testStatusDeletion() {
         String name = "Delete" + RandomUtils.randomString();
         String slug = "del" + RandomUtils.randomString();
@@ -77,6 +83,7 @@ class TaskStatusTest extends BaseTest {
     }
 
     @Test
+    @DisplayName("Successfully bulk delete task statuses")
     void testBulkDelete() {
         String firstName = "Bulk" + RandomUtils.randomString();
         String firstSlug = "bulk" + RandomUtils.randomString();

@@ -3,11 +3,13 @@ package hexlet.code;
 import hexlet.code.pages.DashboardPage;
 import hexlet.code.pages.LoginPage;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisplayName("Authentication Tests")
 class AuthTest extends BaseTest {
 
     private LoginPage loginPage;
@@ -17,11 +19,12 @@ class AuthTest extends BaseTest {
     @Override
     void setUp() {
         super.setUp();
-        loginPage = new LoginPage(driver, wait);
-        dashboardPage = new DashboardPage(driver, wait);
+        loginPage = new LoginPage(driver);
+        dashboardPage = new DashboardPage(driver);
     }
 
     @Test
+    @DisplayName("Successfully login with valid credentials")
     void testSuccessfulLogin() {
         loginPage.open();
         loginPage.login(config.username(), config.password());
@@ -30,6 +33,7 @@ class AuthTest extends BaseTest {
     }
 
     @Test
+    @DisplayName("Successfully logout from the application")
     void testSuccessfulLogout() {
         loginPage.open();
         loginPage.login(config.username(), config.password())

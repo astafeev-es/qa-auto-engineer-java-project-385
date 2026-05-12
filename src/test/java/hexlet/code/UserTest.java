@@ -3,12 +3,14 @@ package hexlet.code;
 import hexlet.code.pages.UsersPage;
 import hexlet.code.utils.RandomUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisplayName("Users Management Tests")
 class UserTest extends BaseTest {
 
     private UsersPage usersPage;
@@ -17,12 +19,13 @@ class UserTest extends BaseTest {
     @Override
     void setUp() {
         super.setUp();
-        usersPage = new UsersPage(driver, wait);
+        usersPage = new UsersPage(driver);
         login();
         usersPage.open();
     }
 
     @Test
+    @DisplayName("Successfully create a new user")
     void testUserCreation() {
         String email = "create" + RandomUtils.randomString() + "@test.com";
         usersPage.openCreatePage();
@@ -34,6 +37,7 @@ class UserTest extends BaseTest {
     }
 
     @Test
+    @DisplayName("User list display correct columns and data")
     void testUserListDisplay() {
         String email = "list" + RandomUtils.randomString() + "@test.com";
         usersPage.create(email, "List", "User");
@@ -49,6 +53,7 @@ class UserTest extends BaseTest {
     }
 
     @Test
+    @DisplayName("Successfully edit an existing user")
     void testUserEditing() {
         String email = "edit" + RandomUtils.randomString() + "@test.com";
         usersPage.create(email, "Before", "Edit");
@@ -68,6 +73,7 @@ class UserTest extends BaseTest {
     }
 
     @Test
+    @DisplayName("Show error message for invalid email format")
     void testEmailValidation() {
         usersPage.openCreatePage();
         usersPage.fillForm("invalid-email", "Test", "User");
@@ -77,6 +83,7 @@ class UserTest extends BaseTest {
     }
 
     @Test
+    @DisplayName("Successfully delete a user")
     void testUserDeletion() {
         String email = "delete" + RandomUtils.randomString() + "@test.com";
         usersPage.create(email, "To", "Delete");
@@ -85,6 +92,7 @@ class UserTest extends BaseTest {
     }
 
     @Test
+    @DisplayName("Successfully bulk delete users")
     void testBulkDelete() {
         String firstEmail = "bulk" + RandomUtils.randomString() + "@test.com";
         String secondEmail = "bulk" + RandomUtils.randomString() + "@test.com";

@@ -5,6 +5,7 @@ import hexlet.code.pages.LabelsPage;
 import hexlet.code.pages.UsersPage;
 import hexlet.code.utils.RandomUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.interactions.Actions;
@@ -12,6 +13,7 @@ import org.openqa.selenium.interactions.Actions;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisplayName("Tasks Management Tests")
 class TaskTest extends BaseTest {
 
     private TasksPage tasksPage;
@@ -21,13 +23,14 @@ class TaskTest extends BaseTest {
     @Override
     void setUp() {
         super.setUp();
-        tasksPage = new TasksPage(driver, wait);
-        labelsPage = new LabelsPage(driver, wait);
+        tasksPage = new TasksPage(driver);
+        labelsPage = new LabelsPage(driver);
         login();
         tasksPage.open();
     }
 
     @Test
+    @DisplayName("Task list display correct columns and data")
     void testTaskListDisplay() {
         String title = "ListTask" + RandomUtils.randomString();
         tasksPage.create(title, "Draft", "jane@gmail.com");
@@ -38,6 +41,7 @@ class TaskTest extends BaseTest {
     }
 
     @Test
+    @DisplayName("Successfully filter tasks by status, assignee and label")
     void testTaskFiltration() {
         String labelName = "FilterLabel" + RandomUtils.randomString();
         labelsPage.openCreatePage().fillForm(labelName);
@@ -54,7 +58,7 @@ class TaskTest extends BaseTest {
         tasksPage.open();
 
         String otherTitle = "OtherTask" + RandomUtils.randomString();
-        UsersPage usersPage = new UsersPage(driver, wait);
+        UsersPage usersPage = new UsersPage(driver);
         usersPage.create("john@gmail.com", "John", "Doe");
         tasksPage.create(otherTitle, "Draft", "john@gmail.com");
 
@@ -78,7 +82,7 @@ class TaskTest extends BaseTest {
 
         tasksPage.open();
 
-        tasksPage.selectFromCombobox("Label", labelName); // Could be 'Labels' or 'Label'
+        tasksPage.selectFromCombobox("Label", labelName);
         tasksPage.waitForTaskToDisappear(otherTitle);
         assertTrue(tasksPage.isTaskInColumn(title, "To Review"),
             "Task should be visible after filtration by Label");
@@ -87,6 +91,7 @@ class TaskTest extends BaseTest {
     }
 
     @Test
+    @DisplayName("Successfully delete a task")
     void testTaskDeletion() {
         String title = "DeleteTask" + RandomUtils.randomString();
         tasksPage.create(title, "Draft", "jane@gmail.com");
@@ -98,6 +103,7 @@ class TaskTest extends BaseTest {
     }
 
     @Test
+    @DisplayName("Successfully create a new task")
     void testTaskCreation() {
         String title = "Task" + RandomUtils.randomString();
         tasksPage.openCreatePage();
@@ -109,6 +115,7 @@ class TaskTest extends BaseTest {
     }
 
     @Test
+    @DisplayName("Successfully edit an existing task")
     void testTaskEditing() {
         String title = "EditTask" + RandomUtils.randomString();
         tasksPage.create(title, "Draft", "jane@gmail.com");
@@ -119,6 +126,7 @@ class TaskTest extends BaseTest {
     }
 
     @Test
+    @DisplayName("Successfully move task to another status")
     void testTaskMoving() {
         String title = "MoveTask" + RandomUtils.randomString();
         tasksPage.create(title, "Draft", "jane@gmail.com");

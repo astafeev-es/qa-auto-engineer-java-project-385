@@ -5,6 +5,7 @@ public interface Config {
     String username();
     String password();
     String windowSize();
+    boolean headless();
 
     static Config get() {
         String environment = System.getProperty("test.env", "local");

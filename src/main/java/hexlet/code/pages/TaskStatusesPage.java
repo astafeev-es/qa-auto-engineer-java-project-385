@@ -1,12 +1,10 @@
 package hexlet.code.pages;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class TaskStatusesPage extends BasePage {
 
@@ -19,15 +17,17 @@ public class TaskStatusesPage extends BasePage {
     @FindBy(xpath = "//input[@aria-label='Select all']/..")
     private WebElement selectAllCheckbox;
 
-    public TaskStatusesPage(WebDriver driver, WebDriverWait wait) {
-        super(driver, wait);
+    public TaskStatusesPage(WebDriver driver) {
+        super(driver);
     }
 
     @Override
+    @Step("Open Task Statuses page")
     public void open() {
         elementHelper.click(taskStatusesMenuItem);
     }
 
+    @Step("Create task status with name {name} and slug {slug}")
     public void create(String name, String slug) {
         openCreatePage();
         fillForm(name, slug);
@@ -35,34 +35,39 @@ public class TaskStatusesPage extends BasePage {
         open();
     }
 
+    @Step("Fill task status form")
     public void fillForm(String name, String slug) {
         elementHelper.sendKeys(nameInput, name);
         elementHelper.sendKeys(slugInput, slug);
     }
 
+    @Step("Open task status create page")
     public TaskStatusesPage openCreatePage() {
         open();
         elementHelper.click(createButton);
         return this;
     }
 
+    @Step("Check if create task status form is displayed")
     public boolean isCreateFormDisplayed() {
         return elementHelper.isVisible(nameInput)
             && elementHelper.isVisible(slugInput)
             && elementHelper.isVisible(submitButton);
     }
 
+    @Step("Open settings for status {slug}")
     public TaskStatusesPage openStatusSettings(String slug) {
         open();
         String rowXpath = "//tr[td[contains(., '%s')]]".formatted(slug);
-        WebElement row = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(rowXpath)));
+        WebElement row = elementHelper.findElement(By.xpath(rowXpath));
         elementHelper.click(row);
         return this;
     }
 
+    @Step("Edit status {slug} to have name {newName}")
     public TaskStatusesPage edit(String slug, String newName) {
         openStatusSettings(slug);
-        replaceInputValue(nameInput, newName);
+        elementHelper.replaceInputValue(nameInput, newName);
         elementHelper.click(slugInput);
 
         submit();
@@ -70,44 +75,37 @@ public class TaskStatusesPage extends BasePage {
         return this;
     }
 
-    private void replaceInputValue(WebElement input, String value) {
-        String currentValue = input.getAttribute("value");
-        elementHelper.click(input);
-        input.sendKeys(Keys.END);
-        for (int index = 0; index < currentValue.length(); index++) {
-            input.sendKeys(Keys.BACK_SPACE);
-        }
-        input.sendKeys(value);
-    }
-
+    @Step("Delete status {slug}")
     public TaskStatusesPage deleteStatus(String slug) {
         open();
         String rowXpath = "//tr[td[contains(., '%s')]]".formatted(slug);
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(rowXpath)));
         String checkboxXpath = rowXpath + "//input[@type='checkbox']/..";
-        WebElement checkbox = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(checkboxXpath)));
+        WebElement checkbox = elementHelper.findElement(By.xpath(checkboxXpath));
         elementHelper.click(checkbox);
 
         elementHelper.click(deleteButton);
         String cellXpath = "//table/tbody/tr/td[contains(., '%s')]".formatted(slug);
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(cellXpath)));
+        elementHelper.waitForInvisibility(By.xpath(cellXpath));
         return this;
     }
 
+    @Step("Check if status with text '{text}' is present")
     public boolean isStatusPresent(String text) {
-        return driver.findElements(By.xpath("//td[contains(., '" + text + "')]")).size() > 0;
+        return elementHelper.isPresent(By.xpath("//td[contains(., '" + text + "')]"));
     }
 
+    @Step("Get status count")
     public int getStatusCount() {
-        return driver.findElements(By.xpath("//table/tbody/tr[td]")).size();
+        return elementHelper.findElements(By.xpath("//table/tbody/tr[td]")).size();
     }
 
+    @Step("Bulk delete statuses")
     public TaskStatusesPage bulkDelete() {
         open();
         if (getStatusCount() > 0) {
             elementHelper.click(selectAllCheckbox);
             elementHelper.click(deleteButton);
-            wait.until(ExpectedConditions.numberOfElementsToBe(By.xpath("//table/tbody/tr[td]"), 0));
+            elementHelper.waitForNumberOfElements(By.xpath("//table/tbody/tr[td]"), 0);
         }
         return this;
     }

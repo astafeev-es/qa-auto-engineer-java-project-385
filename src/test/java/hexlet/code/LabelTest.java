@@ -3,12 +3,14 @@ package hexlet.code;
 import hexlet.code.pages.LabelsPage;
 import hexlet.code.utils.RandomUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisplayName("Labels Management Tests")
 class LabelTest extends BaseTest {
 
     private LabelsPage labelsPage;
@@ -17,12 +19,13 @@ class LabelTest extends BaseTest {
     @Override
     void setUp() {
         super.setUp();
-        labelsPage = new LabelsPage(driver, wait);
+        labelsPage = new LabelsPage(driver);
         login();
         labelsPage.open();
     }
 
     @Test
+    @DisplayName("Successfully create a new label")
     void testLabelCreation() {
         String name = "Label" + RandomUtils.randomString();
         labelsPage.openCreatePage();
@@ -34,6 +37,7 @@ class LabelTest extends BaseTest {
     }
 
     @Test
+    @DisplayName("Label list display correct columns and data")
     void testLabelListDisplay() {
         String name = "List" + RandomUtils.randomString();
         labelsPage.create(name);
@@ -45,6 +49,7 @@ class LabelTest extends BaseTest {
     }
 
     @Test
+    @DisplayName("Successfully edit an existing label")
     void testLabelEditing() {
         String name = "Before" + RandomUtils.randomString();
         labelsPage.create(name);
@@ -58,6 +63,7 @@ class LabelTest extends BaseTest {
     }
 
     @Test
+    @DisplayName("Successfully delete a label")
     void testLabelDeletion() {
         String name = "Delete" + RandomUtils.randomString();
         labelsPage.create(name);

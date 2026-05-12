@@ -5,6 +5,7 @@ plugins {
     id("com.github.ben-manes.versions") version "0.53.0"
     id("checkstyle")
     id("org.sonarqube") version "7.2.3.7755"
+    id("io.qameta.allure") version "2.12.0"
 }
 
 group = "hexlet.code"
@@ -21,13 +22,21 @@ java {
 }
 
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:6.0.2"))
+    testImplementation(platform("org.junit:junit-bom:5.11.4"))
     testImplementation("org.junit.jupiter:junit-jupiter")
-    implementation("org.seleniumhq.selenium:selenium-java:4.40.0")
-    implementation("org.apache.commons:commons-lang3:3.20.0")
-    implementation("org.slf4j:slf4j-api:2.0.12")
-    implementation("ch.qos.logback:logback-classic:1.5.0")
+    implementation("org.seleniumhq.selenium:selenium-java:4.27.0")
+    implementation("org.apache.commons:commons-lang3:3.17.0")
+    implementation("org.slf4j:slf4j-api:2.0.16")
+    implementation("ch.qos.logback:logback-classic:1.5.16")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    implementation("io.qameta.allure:allure-junit5:2.29.1")
+}
+
+allure {
+    version.set("2.29.1")
+    adapter {
+        aspectjVersion.set("1.9.22.1")
+    }
 }
 
 tasks.test {

@@ -23,6 +23,11 @@ public enum LocalConfig implements Config {
         return getEnvOrDefault("WINDOW_SIZE", "1920,1080");
     }
 
+    @Override
+    public boolean headless() {
+        return Boolean.parseBoolean(getEnvOrDefault("HEADLESS", "true"));
+    }
+
     private String getEnvOrDefault(String key, String defaultValue) {
         String value = System.getenv(key);
         return value != null ? value : defaultValue;
