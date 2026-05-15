@@ -3,6 +3,7 @@ package hexlet.code.utils;
 import java.time.Duration;
 import java.util.List;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -67,8 +68,10 @@ public final class ElementHelper {
 
     public void click(WebElement element) {
         LOGGER.debug("Clicking element");
-        getWait("Element should be clickable")
-                .until(ExpectedConditions.elementToBeClickable(element)).click();
+        getWait("Element should be clickable").until(d -> {
+            element.click();
+            return true;
+        });
     }
 
     public void pressEscape() {
@@ -129,6 +132,7 @@ public final class ElementHelper {
         wait.pollingEvery(DEFAULT_POLLING);
         wait.ignoring(NoSuchElementException.class);
         wait.ignoring(StaleElementReferenceException.class);
+        wait.ignoring(ElementClickInterceptedException.class);
         if (message != null) {
             wait.withMessage(message);
         }
