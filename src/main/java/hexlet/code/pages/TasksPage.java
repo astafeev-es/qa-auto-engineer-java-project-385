@@ -59,13 +59,13 @@ public class TasksPage extends BasePage {
     public boolean isTaskInColumn(String title, String columnName) {
         String xpath = "//div[h6[contains(., '%s')]]//*[@role='button' and contains(., '%s')]"
             .formatted(columnName, title);
-        return elementHelper.isPresent(By.xpath(xpath));
+        return elementHelper.isVisibleBy(By.xpath(xpath));
     }
 
     @Step("Check if task '{title}' is present")
     public boolean isTaskPresent(String title) {
         String xpath = "//*[@data-rfd-draggable-id and contains(., '%s')]".formatted(title);
-        return elementHelper.isPresent(By.xpath(xpath));
+        return elementHelper.isVisibleBy(By.xpath(xpath));
     }
 
     @Override
