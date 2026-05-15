@@ -1,42 +1,34 @@
 package hexlet.code.utils;
 
 import io.qameta.allure.Allure;
+import java.io.ByteArrayInputStream;
+import java.util.function.Supplier;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.TestWatcher;
+import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 
-import java.io.ByteArrayInputStream;
-import java.util.Optional;
+public class TestScreenshotExtension implements AfterTestExecutionCallback {
+    private final Supplier<WebDriver> driverSupplier;
 
-public class TestScreenshotExtension implements TestWatcher {
+    public TestScreenshotExtension(Supplier<WebDriver> driverSupplier) {
+        this.driverSupplier = driverSupplier;
+    }
 
     @Override
-    public void testFailed(ExtensionContext context, Throwable cause) {
-        Object testInstance = context.getRequiredTestInstance();
-        try {
-            java.lang.reflect.Field driverField = testInstance.getClass().getSuperclass().getDeclaredField("driver");
-            driverField.setAccessible(true);
-            WebDriver driver = (WebDriver) driverField.get(testInstance);
-            if (driver != null) {
+    public void afterTestExecution(ExtensionContext context) {
+        WebDriver driver = driverSupplier.get();
+        if (driver != null) {
+            try {
                 byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-                Allure.addAttachment("Screenshot on failure", new ByteArrayInputStream(screenshot));
+                String attachmentName = context.getExecutionException().isPresent()
+                        ? "Screenshot on failure"
+                        : "Final test screenshot";
+                Allure.addAttachment(attachmentName, "image/png", new ByteArrayInputStream(screenshot), ".png");
+            } catch (Exception e) {
+                // Ignore if we can't take a screenshot
             }
-        } catch (Exception e) {
-            // Ignore if we can't take a screenshot
         }
-    }
-
-    @Override
-    public void testDisabled(ExtensionContext context, Optional<String> reason) {
-    }
-
-    @Override
-    public void testSuccessful(ExtensionContext context) {
-    }
-
-    @Override
-    public void testAborted(ExtensionContext context, Throwable cause) {
     }
 }

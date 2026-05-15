@@ -101,6 +101,11 @@ public abstract class BasePage {
         elementHelper.click(option);
     }
 
+    @Step("Press Escape key")
+    public void pressEscape() {
+        elementHelper.pressEscape();
+    }
+
     @Step("Logout")
     public LoginPage logout() {
         elementHelper.click(profileButton);

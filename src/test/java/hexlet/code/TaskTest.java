@@ -7,8 +7,6 @@ import hexlet.code.utils.RandomUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.interactions.Actions;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -53,7 +51,7 @@ class TaskTest extends BaseTest {
         tasksPage.openCreatePage();
         tasksPage.fillForm(title, "To Review", "jane@gmail.com");
         tasksPage.selectFromCombobox("Label", labelName);
-        new Actions(driver).sendKeys(Keys.ESCAPE).perform();
+        tasksPage.pressEscape();
         tasksPage.submit();
         tasksPage.open();
 

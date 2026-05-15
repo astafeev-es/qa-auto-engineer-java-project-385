@@ -3,13 +3,13 @@ package hexlet.code.utils;
 import java.time.Duration;
 import java.util.List;
 import org.openqa.selenium.By;
-import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -24,21 +24,6 @@ public final class ElementHelper {
 
     public ElementHelper(WebDriver driver) {
         this.driver = driver;
-    }
-
-    private WebDriverWait getWait(Duration timeout, String message) {
-        WebDriverWait wait = new WebDriverWait(driver, timeout);
-        wait.pollingEvery(DEFAULT_POLLING);
-        wait.ignoring(NoSuchElementException.class);
-        wait.ignoring(StaleElementReferenceException.class);
-        if (message != null) {
-            wait.withMessage(message);
-        }
-        return wait;
-    }
-
-    private WebDriverWait getWait(String message) {
-        return getWait(DEFAULT_TIMEOUT, message);
     }
 
     public boolean isVisible(WebElement element) {
@@ -81,30 +66,14 @@ public final class ElementHelper {
     }
 
     public void click(WebElement element) {
-        int attempts = 0;
-        while (attempts < 3) {
-            try {
-                LOGGER.debug("Clicking element. Attempt: {}", attempts + 1);
-                getWait("Element should be clickable")
-                        .until(ExpectedConditions.elementToBeClickable(element)).click();
-                return;
-            } catch (ElementClickInterceptedException e) {
-                LOGGER.warn("Click intercepted. Waiting for snackbars to disappear...");
-                handleIntercept();
-                attempts++;
-            }
-        }
-        // Last attempt without catching intercepted
-        element.click();
+        LOGGER.debug("Clicking element");
+        getWait("Element should be clickable")
+                .until(ExpectedConditions.elementToBeClickable(element)).click();
     }
 
-    private void handleIntercept() {
-        try {
-            getWait(Duration.ofSeconds(2), "Snackbar should disappear")
-                    .until(ExpectedConditions.invisibilityOfElementLocated(By.className("MuiSnackbar-root")));
-        } catch (TimeoutException ignored) {
-            // Snackbar might not be there anymore or we timed out
-        }
+    public void pressEscape() {
+        LOGGER.debug("Pressing ESCAPE key");
+        new Actions(driver).sendKeys(Keys.ESCAPE).perform();
     }
 
     public String getText(WebElement element) {
@@ -148,5 +117,20 @@ public final class ElementHelper {
     public void waitForNumberOfElements(By locator, int number) {
         getWait("Number of elements should be " + number)
                 .until(ExpectedConditions.numberOfElementsToBe(locator, number));
+    }
+
+    private WebDriverWait getWait(Duration timeout, String message) {
+        WebDriverWait wait = new WebDriverWait(driver, timeout);
+        wait.pollingEvery(DEFAULT_POLLING);
+        wait.ignoring(NoSuchElementException.class);
+        wait.ignoring(StaleElementReferenceException.class);
+        if (message != null) {
+            wait.withMessage(message);
+        }
+        return wait;
+    }
+
+    private WebDriverWait getWait(String message) {
+        return getWait(DEFAULT_TIMEOUT, message);
     }
 }

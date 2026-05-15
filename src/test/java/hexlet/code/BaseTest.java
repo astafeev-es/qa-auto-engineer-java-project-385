@@ -6,16 +6,15 @@ import hexlet.code.utils.TestScreenshotExtension;
 import hexlet.code.utils.WebDriverFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openqa.selenium.WebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-@ExtendWith(TestScreenshotExtension.class)
 abstract class BaseTest {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(BaseTest.class);
     protected WebDriver driver;
     protected Config config;
+
+    @RegisterExtension
+    protected TestScreenshotExtension watcher = new TestScreenshotExtension(() -> driver);
 
     @BeforeEach
     void setUp() {

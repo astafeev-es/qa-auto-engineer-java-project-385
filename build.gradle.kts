@@ -5,7 +5,7 @@ plugins {
     id("com.github.ben-manes.versions") version "0.53.0"
     id("checkstyle")
     id("org.sonarqube") version "7.2.3.7755"
-    id("io.qameta.allure") version "2.12.0"
+    id("io.qameta.allure") version "4.0.2"
 }
 
 group = "hexlet.code"
@@ -33,8 +33,9 @@ dependencies {
 }
 
 allure {
-    version.set("2.29.1")
+    version.set("2.41.0")
     adapter {
+        autoconfigure.set(true)
         aspectjVersion.set("1.9.22.1")
     }
 }
