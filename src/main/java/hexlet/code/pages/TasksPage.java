@@ -49,6 +49,8 @@ public class TasksPage extends BasePage {
 
     @Step("Check if create task form is displayed")
     public boolean isCreateFormDisplayed() {
+        elementHelper.waitForVisibility(titleInput);
+        elementHelper.waitForVisibility(submitButton);
         return elementHelper.isVisible(titleInput)
             && elementHelper.isVisible(submitButton)
             && elementHelper.isVisibleBy(By.xpath("//*[contains(normalize-space(.), 'Assignee')]"))

@@ -114,6 +114,11 @@ public final class ElementHelper {
                 .until(ExpectedConditions.invisibilityOfElementLocated(locator));
     }
 
+    public void waitForVisibility(WebElement element) {
+        getWait("Element should become visible")
+                .until(ExpectedConditions.visibilityOf(element));
+    }
+
     public void waitForNumberOfElements(By locator, int number) {
         getWait("Number of elements should be " + number)
                 .until(ExpectedConditions.numberOfElementsToBe(locator, number));
